@@ -587,7 +587,11 @@
             <h3>Add you own:</h3>
             <div class='odd padd10'>
                 Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
-                    echo $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+                    $dir = dirname($_SERVER['PHP_SELF']);
+                    if($dir == '/') {
+                        $dir = '';
+                    }
+                    echo $_SERVER['HTTP_HOST'] . $dir;
                 ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
             </div>
 
