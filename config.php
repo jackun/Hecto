@@ -1,12 +1,18 @@
 <?php
-define("DB_SERVER",   "localhost");
-define("DB_USERNAME", "root");
-define("DB_PASSWORD", "toor");
-define("DB_NAME",     "hecto");
-define('PROG_NAME',   "Hecto");
-define('SALT',        "kdjhfkjsfdhsdfhksdksjf");
-define('LEHEL', 200);
-define('DEFAULT_FORMAT', 'default');
+define('LIVE_CONFIG', 'config_live.php');
+if(file_exists(LIVE_CONFIG)) {
+    include_once LIVE_CONFIG;
+} else {
+    define("DB_SERVER",   "localhost");
+    define("DB_USERNAME", "root");
+    define("DB_PASSWORD", "toor");
+    define("DB_NAME",     "hecto");
+    define('PROG_NAME',   "Hecto");
+    define('SALT',        "kdjhfkjsfdhsdfhksdksjf");
+    define('LEHEL', 200);
+    define('DEFAULT_FORMAT', 'default');
+    define('AUTOPLAY', 'false');
+}
 
 //ytplayer API
 $formats = array(

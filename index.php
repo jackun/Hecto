@@ -26,7 +26,7 @@
             kontroll = "",
             cued = hetkel,
             notseeking = true,
-            autoplay = false;
+            autoplay = <?php echo AUTOPLAY ?>,
         l = location.href;
         if (l.indexOf('#') > -1) {
             watch = l.substring(l.indexOf('#') + 1, l.length);
