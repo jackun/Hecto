@@ -1,0 +1,139 @@
+body {
+    margin:0px auto 20px;
+    font-family:Trebuchet MS, Helvetica, sans-serif; 
+    background-color:#E3EFF3;
+    font-size:13px;
+
+}
+div{
+    border:0px solid #ccc;
+}
+#header {
+    background-color:#718F8F; 
+    height:20px;
+    padding:10px; 
+    font-size:14px;
+}
+
+#header #text { 
+    font-weight:bold; 
+    font-size:17px; 
+    color:#fff;
+    float:left;
+    width:200px;
+}
+
+#header #text a{ 
+    font-weight:bold; 
+    font-size:17px; 
+    color:#fff;
+    text-decoration:none;
+}
+
+#header #links{
+    text-align:right;
+    overflow:hidden;
+    color:#FFFFFF;
+    text-decoration:none;
+    font-weight:bold;
+}
+#header #links a{
+    color:#8BBECB;
+    text-decoration:none;
+    font-weight:bold;
+}
+#header #links a:hover{
+    color:#CCC;
+}
+
+#header #links a{
+    color:#BFDCE3;
+    margin-left:15px;
+    text-decoration:none;
+}
+
+#content {
+    padding:10px;
+}
+#content a{
+    color:#78B6C5;
+    font-weight:bold;
+}
+#content a:hover{
+    color:#4895A8;
+}
+#content h1 {
+    font-size:17px;
+}
+#content h2 {
+    font-size:15px;
+}
+#content table td a{
+    color:black;
+}
+#content table td {
+    font-size:13px;
+}
+form{
+    display:inline;
+}
+#footer {
+    border-top:1px solid #ddd;
+    height:20px;
+    padding:20px; 
+    font-size:10px;
+    color:#718F8F;
+    text-align:right;
+    margin-bottom:100px;
+}
+#header #links .yellow{
+    color:yellow;
+    text-decoration:underlined;
+}
+#header #links .yellow a{
+    color:yellow;
+    text-decoration:underlined;
+}
+#footer a{
+    color:black;
+    text-decoration:none;
+}
+#footer a:hover{
+    color:#153B40;
+    text-decoration:none;
+}
+#song_title,#time{
+    padding-top:10px;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.even{
+    background-color:#D5EBF0;
+}
+
+.odd{
+    background-color:#C3D8DC;
+}
+
+.thead{
+    background-color:#718F8F;
+}
+
+.right{
+    float:right;
+}
+
+.current{
+    background-color:#7EBFA5;
+}
+.tDnD_whileDrag td{
+    background-color:#A8BABD;
+}
+
+.padd10{
+    padding:10px;
+}
+.checked{
+    background-color:#E2ECEE;
+}
