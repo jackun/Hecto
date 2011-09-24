@@ -414,7 +414,7 @@
             return next;
         }
 
-        function getPlaylist() {
+        function create_playlist() {
             if (anySelected() == 0) {
                 return;
             }
@@ -430,21 +430,32 @@
             }
         }
 
-        function shuffle() { <?php
+        function shuffle() {
+            <?php
             $tmp = $_GET;
             $tmp['shuffle'] = 'true';
-            echo "location.href='?".http_build_query($tmp, '', '&')."';\n"; ?>
+            echo "location.href = '?".http_build_query($tmp, '', '&')."';\n"; ?>
         }
 
-        function toggleLayout() { <?php
+        function toggleLayout() {
+            <?php
             $tmp = $_GET;
             $tmp['toggleLayout'] = 'true';
-            echo "location.href='?".http_build_query($tmp, '', '&')."';\n"; ?>
+            echo "location.href = '?".http_build_query($tmp, '', '&')."';\n"; ?>
         }
 
-        function setformat() {
+        function set_format() {
             format = $('#format').val();
             return false; //Don't POST form
+        }
+
+        function set_key() {
+            var key = prompt('New key?', '<?php
+                echo $_COOKIE['h2bkey'];
+            ?>');
+            if(key) {
+                location.href = '?set_key=' + encodeURIComponent(key);
+            }
         }
     </script> 
  </head> 
@@ -482,7 +493,7 @@
     foreach($formats as $f){echo "<option value='$f' ".(getformat()==$f?'selected':'').">$f</option>";}
 ?>
             </select>
-            <input type="submit" value="OK" onclick="return setformat();">
+            <input type="submit" value="OK" onclick="return set_format();">
             </form>
             </td>
         </tr>
@@ -575,7 +586,9 @@
 
             <h3>Add you own:</h3>
             <div class='odd padd10'>
-                Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://lusikas.com/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();">AddVideos</a></b> or use <a href='hecto.crx'>Google Chrome plugin</a>
+                Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
+                    echo $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+                ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
             </div>
 
             <h3>Get source:</h3>
@@ -616,7 +629,7 @@
                             $i++;
                         }
                 echo "</table>";
-                if(!isset($_GET['p'])){ echo "<input type='button' value='Create playlist' onclick='getPlaylist()'>";}
+                if(!isset($_GET['p'])){ echo "<input type='button' value='Create playlist' onclick='create_playlist()'>";}
                 echo "<span class=right>";
                 if($prev_link){
                     if(($start - LEHEL) <=0){
@@ -658,9 +671,15 @@
 <?php
 $time_end = microtime_float()-$time_start;
 echo <<<END
-<div id='footer'>~<span id=bw>#</span> / {$time_end} / {$_COOKIE['h2bkey']}<br>
-<a href='http://twitter.com/tanel'>@tanel</a><br>
-<a href='http://tanelpuhu.com'>tanelpuhu.com</a><br></div>
+<div id='footer'>
+    ~<span id=bw>#</span>
+    /
+    {$time_end}
+    /
+    <a href='javascript:void(0);' onClick="set_key();">{$_COOKIE['h2bkey']}</a>
+    <br>
+    <a href='http://twitter.com/tanel'>@tanel</a><br>
+    <a href='http://tanelpuhu.com'>tanelpuhu.com</a><br></div>
 END;
 ?>
     <script type="text/javascript">

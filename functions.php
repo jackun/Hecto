@@ -121,18 +121,19 @@ function add($video) {
     $watch = "";
     $url = parse_url($video);
     $url['host'] = ltrim($url['host'], "w.");
-    if(strtolower($url['host'])!="youtube.com")
+    if(strtolower($url['host']) != "youtube.com") {
         bookmark('Wrong page, are you on youtube.');
+    }
     $query = array_key_exists('fragment', $url)?$url['fragment']:$url['query'];
     $query = $url['query'];
     $v = "";
     parse_str($query);
     $watch = $v;
-    if(preg_match('/[^a-z0-9_-]+/i', $watch)){
+    if(preg_match('/[^a-z0-9_-]+/i', $watch)) {
         bookmark('Illegal stuff in video id.');
     }
 
-    if($watch!=""){
+    if($watch) {
         $q = "SELECT count(watch) FROM videos WHERE watch = '".(mysql_escape_string($watch))."'";
         $ret = mysql_fetch_array($c->q($q));
         if($ret[0] != 0){
@@ -292,6 +293,13 @@ if(isset($_COOKIE['layout'])) {
 if(isset($_POST['format'])) {
     setformat($_POST['format']);
     header("Location: {$_SERVER['HTTP_REFERER']}");
+    die();
+}
+
+if(isset($_GET['set_key'])) {
+    setBkey($_GET['set_key']);
+    header("Location: {$_SERVER['HTTP_REFERER']}");
+    die();
 }
 
 include "query.php";
