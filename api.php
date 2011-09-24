@@ -1,11 +1,5 @@
 <?php
 include "functions.php";
-
-#for chrome plugin to get first/defult key
-if(isset($_GET['get_bkey'])){
-   die(json_encode(array('msg'=>getBkey())));
-}
-
 $time_start = microtime_float();
 
 $start = isset($_GET['start'])?(int)$_GET['start']:0;

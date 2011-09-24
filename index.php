@@ -587,12 +587,13 @@
             <h3>Add you own:</h3>
             <div class='odd padd10'>
                 Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
-                    $dir = dirname($_SERVER['PHP_SELF']);
-                    if($dir == '/') {
-                        $dir = '';
-                    }
+                    $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
                     echo $_SERVER['HTTP_HOST'] . $dir;
                 ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
+                <br />
+                or use this <a href="//<?php
+                    echo $_SERVER['HTTP_HOST'] . $dir . '/hecto.crx';
+                ?>">Google Chrome extension</a>
             </div>
 
             <h3>Get source:</h3>
@@ -674,17 +675,13 @@
 </div>
 <?php
 $time_end = microtime_float()-$time_start;
-echo <<<END
-<div id='footer'>
-    ~<span id=bw>#</span>
-    /
-    {$time_end}
-    /
-    <a href='javascript:void(0);' onClick="set_key();">{$_COOKIE['h2bkey']}</a>
+print sprintf("<div id='footer'>
+    ~<span id=bw>#</span> / %s / <a href='javascript:void(0);' onClick='set_key();'>%s</a>
     <br>
     <a href='http://twitter.com/tanel'>@tanel</a><br>
     <a href='http://tanelpuhu.com'>tanelpuhu.com</a><br></div>
-END;
+    ", $time_end, $bkey
+);
 ?>
     <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");

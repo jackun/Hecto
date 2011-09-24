@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title></title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </head>
+  <body>
+    <nobr><span id='status'>Sending...</span></nobr>
+    <script type="text/javascript">
+        chrome.tabs.getSelected(null, function (tab){
+            var tabUrl = tab.url,
+                bkey = get_bkey();
+            $.ajax({
+                type: "GET",
+                url: "http://" + get_host() + "/",
+                data: {
+                    plugin    : true,
+                    bookmark  : tabUrl,
+                    pluginkey : bkey
+                },
+                success: function(transport){
+                    var resp = JSON.parse(transport),
+                        pref = "",
+                        suff = "";
+                    if(resp.watch && resp.watch != '') {
+                        pref = "<a href='http://" + get_host() + "/#"+resp.watch+"' target=_blank>";
+                        suff = "</a>";
+                    }
+                    localStorage.bkey = resp.bkey;
+                    yourlist = "<a href='http://" + get_host() + "/?bkey="+resp.bkey+"' target=_blank>Your playlist is here!</a>"
+                    $('#status').html(pref + resp.msg + suff + " | " + yourlist);
+                    // chrome.browserAction.setBadgeText({text: "Ok"});
+                    // setTimeout(function(){
+                    //     chrome.browserAction.setBadgeText({text: ""});
+                    // }, 1500);
+                }
+            });
+
+        });
+    </script>
+  </body>
+</html>

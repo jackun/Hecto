@@ -1,0 +1,50 @@
+*{
+    font-family:Trebuchet MS, Helvetica, sans-serif; 
+    background-color:#E3EFF3;
+}
+.options {
+    margin:100px;
+}
+input,select,option{
+    border:1px solid #ccc;
+    padding:10px;
+    font-size:20px;
+    font-weight:bold;
+    background-color:#FFF;
+}
+.right{
+    text-align:right;
+}
+.center{
+    text-align:center;
+}
+hr{
+    color: #f00;
+    height: 0px;
+    border:1px solid #ddd;
+}
+.footer{
+    border-top:1px solid #ddd;
+    margin-top:30px;
+    color:#999;
+    font-size:10px;
+}
+.footer a{
+    color:#777;
+    text-decoration:none;
+}
+.footer a:hover{
+    color:#999;
+    background-color:yellow;
+}
+.toppad{
+    padding-top:10px;
+}
+.botpad{
+    padding-top:10px;
+}
+.setting{
+    font-weight:bold;
+    font-size:17px;
+    padding-right:20px;
+}
