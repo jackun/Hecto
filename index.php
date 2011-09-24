@@ -3,36 +3,35 @@
     $time_start = microtime_float();
     $imgs = array();
 ?>
+<!DOCTYPE html>
 <html> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
     <title><?php echo PROG_NAME;?></title> 
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="jquery.cooquery.min.js"></script>
-    <script type="text/javascript" src="jquery.tablednd_0_5.js"></script>
-    <script type="text/javascript" src="jquery.scrollTo-min.js"></script>
-    <script type="text/javascript" src="jquery-ui-1.7.2.custom.min.js"></script> 
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link type="text/css" rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
+    <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script> 
     <script src="http://www.google.com/jsapi"></script> 
-    <script> 
-      google.load("swfobject", "2.1");
-    </script> 
     <script type="text/javascript">
-        var format = '<?php echo getformat();?>',
-            ytplayer = null,
+        google.load("swfobject", "2.1");
+        var ytplayer = null,
+            format = '<?php echo getformat();?>',
             songs = <?php echo $rows_json; ?>,
+            hetkel = <?php echo $hetkel; ?>,
             kokku = songs.length,
-            hetkel = <?php echo $hetkel;?>,
             kontroll = "",
             cued = hetkel,
             notseeking = true,
             autoplay = false;
-            l = location.href;
-        if(l.indexOf('#') > -1){
+        l = location.href;
+        if (l.indexOf('#') > -1) {
             watch = l.substring(l.indexOf('#') + 1, l.length);
-            for(var i = 0; i < songs.length; i++) {
-                if(songs[i].watch == watch) {
+            for (var i = 0; i < songs.length; i++) {
+                if (songs[i].watch == watch) {
                     hetkel = i;
                     break;
                 }
@@ -40,135 +39,145 @@
         }
         var onTheMove = hetkel;
         $(document).ready(function() {
-            $("#slider").css('height','10px').css('width','<?php echo $flash_width;?>px').css('margin-top', '5px');
-            $("#slider").progressbar({ value: 0 });
-            $('#slider').slider({value: 0, max: 100, animate: true});
+            $("#slider").css('height', '10px').css('width', '<?php echo $flash_width;?>px').css('margin-top', '5px');
+            $("#slider").progressbar({
+                value: 0
+            });
+            $('#slider').slider({
+                value: 0,
+                max: 100,
+                animate: true
+            });
             $('#slider').bind('slidestart', function(event, ui) {
                 notseeking = false;
             });
             $('#slider').bind('slidestop', function(event, ui) {
-                dur = getDuration();
-                if(dur && dur>=0){
-                    seekTo(($('#slider').slider('value')/100) * dur);
+                var dur = getDuration();
+                if (dur && dur >= 0) {
+                    seekTo(($('#slider').slider('value') / 100) * dur);
                 }
-                setTimeout(function(){
+                setTimeout(function() {
                     notseeking = true;
                 }, 1000);
             });
             $('.thead td').addClass('thead');
             $('.colorize td').addClass('odd');
-            $('.colorize td').hover(function(){
-                    $(this).removeClass('odd').addClass('even');
-                },function(){
-                    $(this).removeClass('even').addClass('odd');
-                    $('.thead td').addClass('thead');
-                });
-            $('img').hover(function(){
-                $(this).fadeTo(300,0.7);
-            },function(){
-                $(this).fadeTo(100,1);
+            $('.colorize td').hover(function() {
+                $(this).removeClass('odd').addClass('even');
+            }, function() {
+                $(this).removeClass('even').addClass('odd');
+                $('.thead td').addClass('thead');
+            });
+            $('img').hover(function() {
+                $(this).fadeTo(300, 0.7);
+            }, function() {
+                $(this).fadeTo(100, 1);
             });
             $("#main").tableDnD();
-            $(document).bind('keypress',function(e){
-                target = e.target.type || 'other';
-                if(target != 'text' && target != 'submit'){
-                    if(e.which==32){
+            $(document).bind('keypress', function(e) {
+                target = (e.target && e.target.type) || 'other';
+                if (target != 'text' && target != 'submit') {
+                    if (e.which == 32) {
                         playSong();
                         return false;
-                    }else if(e.which==110 ||e.which==78){ //N
+                    } else if (e.which == 110 || e.which == 78) { //N
                         nextSong();
-                    }else if(e.which==106 ||e.which==74){ //J
+                    } else if (e.which == 106 || e.which == 74) { //J
                         setYourMove(1);
-                    }else if(e.which==107 ||e.which==75){ //K
+                    } else if (e.which == 107 || e.which == 75) { //K
                         setYourMove();
-                    }else if(e.which==120 ||e.which==88){ //X
-                        $("#main tr[id='"+onTheMove+"'] input[type=checkbox]").attr('checked', 
-                            function(e){
-                                this.checked=!this.checked;
-                            }
-                        );
-                    }else if(e.which==13){
+                    } else if (e.which == 120 || e.which == 88) { //X
+                        $("#main tr[id='" + onTheMove + "'] input[type=checkbox]").attr('checked', function(e) {
+                            this.checked = !this.checked;
+                        });
+                    } else if (e.which == 13) {
                         track(onTheMove);
                     }
                 }
             });
         });
 
-        function addPlay(id){
-            if(kontroll==id){
+        function addPlay(id) {
+            if (kontroll == id) {
                 $.ajax({
                     type: "GET",
                     url: "<?php echo $_SERVER['PHP_SELF'];?>",
-                    data: "addPlay="+id
+                    data: "addPlay=" + id
                 });
             }
         }
 
-        function cookie(name, value){
-            if(name && value!==undefined){
-                $.setCookie(name, value, {duration : 5000});
+        function cookie(name, value) {
+            if (name && value !== undefined) {
+                $.setCookie(name, value, {
+                    duration: 5000
+                });
                 return value;
             }
-            if(name){
+            if (name) {
                 return $.readCookie(name);
             }
         }
 
         function onYouTubePlayerReady(playerId) {
-          ytplayer = document.getElementById("myytplayer");
-          setInterval(updateytplayerInfo, 500);
-          updateytplayerInfo();
-          ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
-          ytplayer.addEventListener("onError", "onPlayerError");
-          volume = parseInt(cookie('volume'));
-          if(volume){
-              ytplayer.setVolume(volume);
-          }
-          if(autoplay){
-              track(hetkel);
-          }
+            ytplayer = document.getElementById("myytplayer");
+            setInterval(updateytplayerInfo, 500);
+            updateytplayerInfo();
+            ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
+            ytplayer.addEventListener("onError", "onPlayerError");
+            volume = parseInt(cookie('volume'));
+            if (volume) {
+                ytplayer.setVolume(volume);
+            }
+            if (autoplay) {
+                track(hetkel);
+            }
         }
 
         function onytplayerStateChange(newState) {
-            if(newState === 0){
-                setTimeout(function(){nextSong();},500);
+            if (newState === 0) {
+                setTimeout(function() {
+                    nextSong();
+                }, 500);
             }
         }
 
         function onPlayerError(errorCode) {
-                $.ajax({
-                    type: "GET",
-                    url: "<?php echo $_SERVER['PHP_SELF'];?>",
-                    data: "erroneous="+songs[hetkel].watch
-                });
-            setTimeout(function(){nextSong();},2000);
+            $.ajax({
+                type: "GET",
+                url: "<?php echo $_SERVER['PHP_SELF'];?>",
+                data: "erroneous=" + songs[hetkel].watch
+            });
+            setTimeout(function() {
+                nextSong();
+            }, 2000);
         }
 
         function updateytplayerInfo() {
             buf = "";
-            if(ytplayer){
-                pros = (getBytesLoaded()/ getBytesTotal()) * 100;
+            if (ytplayer) {
+                pros = (getBytesLoaded() / getBytesTotal()) * 100;
                 time_total = getDuration();
                 time_now = getCurrentTime();
-                if(time_total>=0 && time_now>=0){
-                    pros2 = (time_now / time_total)*100;
+                if (time_total >= 0 && time_now >= 0) {
+                    pros2 = (time_now / time_total) * 100;
                     m = Math.floor(time_now / 60);
                     s = Math.floor(time_now % 60);
-                    buf = (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+                    buf = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
                     buf = buf + " / ";
                     m = Math.floor(time_total / 60);
                     s = Math.floor(time_total % 60);
-                    buf += (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+                    buf += (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
                 }
-                else{
-                    pros=pros2 = 0;
+                else {
+                    pros = pros2 = 0;
                 }
-                
-                $("#slider").progressbar('value',pros);
-                if(notseeking){
-                    $('#slider').slider('value',pros2);
+
+                $("#slider").progressbar('value', pros);
+                if (notseeking) {
+                    $('#slider').slider('value', pros2);
                 }
-                if(getCurrentTime()>getDuration()-10 && cued != hetkel){
+                if (getCurrentTime() > getDuration() - 10 && cued != hetkel) {
                     //cueVideo(songs[getNext()].watch,0);
                     cued = hetkel;
                 }
@@ -176,184 +185,189 @@
             $('#time').html(buf);
         }
 
-        function b2KMGb(bytes){
-            units = ['b','Kb','Mb','Gb','Tb','Pb','Eb','Zb','Yb'];
+        function b2KMGb(bytes) {
+            units = ['b', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
             n = 0;
             unit = units[n];
-            while(bytes>=1024){
-                n+=1;
+            while (bytes >= 1024) {
+                n += 1;
                 unit = units[n];
-                bytes = bytes/1024;
-                if(n>8) {
+                bytes = bytes / 1024;
+                if (n > 8) {
                     break;
                 }
             }
-            bytes = Math.round(bytes*100)/100;
-            return bytes+unit;
+            bytes = Math.round(bytes * 100) / 100;
+            return bytes + unit;
         }
 
         function loadNewVideo(watch, startSeconds) {
-          if (ytplayer) {
+            if (ytplayer) {
                 cbw = parseInt(cookie('BW'));
-                if(cbw){
-                    cbw = cookie('BW', cbw+getBytesLoaded());
-                }else{
+                if (cbw) {
+                    cbw = cookie('BW', cbw + getBytesLoaded());
+                } else {
                     cbw = cookie('BW', getBytesLoaded());
                 }
                 $('#bw').html(b2KMGb(cbw));
-                location.href="#"+songs[hetkel].watch;
+                location.href = "#" + songs[hetkel].watch;
                 ytplayer.loadVideoById(watch, parseInt(startSeconds), format);
                 kontroll = watch;
-                setTimeout(function(){addPlay(watch);}, 10000);
+                setTimeout(function() {
+                    addPlay(watch);
+                }, 10000);
                 $('td,tr').removeClass('current');
-                $('#main #'+hetkel+' td,#main #'+hetkel).addClass('current');
+                $('#main #' + hetkel + ' td,#main #' + hetkel).addClass('current');
             }
         }
 
         function playSong() {
             if (ytplayer) {
-                if(ytplayer.getPlayerState() == 1){
+                if (ytplayer.getPlayerState() == 1) {
                     ytplayer.pauseVideo();
-                    $('#play').attr('src',"images/play.png");
-                }else{
+                    $('#play').attr('src', "images/play.png");
+                } else {
                     ytplayer.playVideo();
-                    $('#play').attr('src',"images/pause.png");
+                    $('#play').attr('src', "images/pause.png");
                 }
             }
         }
 
         function volUp() {
-          if (ytplayer) {
-            var vol = ytplayer.getVolume();
-            ytplayer.setVolume((vol+10>100)?100:vol+10);
-            cookie('volume', ytplayer.getVolume());
-          }
+            if (ytplayer) {
+                var vol = ytplayer.getVolume();
+                ytplayer.setVolume((vol + 10 > 100) ? 100 : vol + 10);
+                cookie('volume', ytplayer.getVolume());
+            }
         }
 
         function volDown() {
-          if (ytplayer) {
-            var vol = ytplayer.getVolume();
-            ytplayer.setVolume((vol-10<0)?0:vol-10);
-            cookie('volume', ytplayer.getVolume());
-          }
+            if (ytplayer) {
+                var vol = ytplayer.getVolume();
+                ytplayer.setVolume((vol - 10 < 0) ? 0 : vol - 10);
+                cookie('volume', ytplayer.getVolume());
+            }
         }
 
         function getPlayerState() {
-          if (ytplayer) {
-            return ytplayer.getPlayerState();
-          }
+            if (ytplayer) {
+                return ytplayer.getPlayerState();
+            }
         }
 
         function getBytesLoaded() {
-          if (ytplayer) {
-            return ytplayer.getVideoBytesLoaded();
-          }
+            if (ytplayer) {
+                return ytplayer.getVideoBytesLoaded();
+            }
         }
 
         function getBytesTotal() {
-          if (ytplayer) {
-            return ytplayer.getVideoBytesTotal();
-          }
+            if (ytplayer) {
+                return ytplayer.getVideoBytesTotal();
+            }
         }
 
         function getCurrentTime() {
-          if (ytplayer) {
-            return ytplayer.getCurrentTime();
-          }
+            if (ytplayer) {
+                return ytplayer.getCurrentTime();
+            }
         }
 
         function getDuration() {
-          if (ytplayer) {
-            return ytplayer.getDuration();
-          }
+            if (ytplayer) {
+                return ytplayer.getDuration();
+            }
         }
 
         function muteSong() {
-          if (ytplayer) {
-            if(ytplayer.isMuted()){
-                ytplayer.unMute();
-                $('#mute').attr('src',"images/unmute.png");
-            }else{
-                ytplayer.mute();
-                $('#mute').attr('src',"images/mute.png");
+            if (ytplayer) {
+                if (ytplayer.isMuted()) {
+                    ytplayer.unMute();
+                    $('#mute').attr('src', "images/unmute.png");
+                } else {
+                    ytplayer.mute();
+                    $('#mute').attr('src', "images/mute.png");
+                }
             }
-          }
         }
 
-        function cueVideo(id, seconds){
-          if (ytplayer) {
-            ytplayer.cueVideoById(id, seconds);
-          }
+        function cueVideo(id, seconds) {
+            if (ytplayer) {
+                ytplayer.cueVideoById(id, seconds);
+            }
         }
 
         function seekTo(seconds) {
-          if (ytplayer) {
-            ytplayer.seekTo(seconds, true);
-          }
+            if (ytplayer) {
+                ytplayer.seekTo(seconds, true);
+            }
         }
 
-        function setSongtitle(){
+        function setSongtitle() {
             document.title = songs[hetkel].title + ' - <?php echo PROG_NAME;?>';
             $('#song_title').html(songs[hetkel].title);
         }
 
-        function nextSong(){
+        function nextSong() {
             enne = hetkel;
             hetkel = getNext();
-            if(enne==hetkel){
+            if (enne == hetkel) {
                 seekTo(0);
-            }else{
+            } else {
                 track(hetkel);
             }
         }
 
-        function setYourMove(down){
-            if(down){
-                next = parseInt($('#main #'+onTheMove).next('tr').attr('id'));
-                if(next>=0){
+        function setYourMove(down) {
+            if (down) {
+                next = parseInt($('#main #' + onTheMove).next('tr').attr('id'));
+                if (next >= 0) {
                     onTheMove = next;
-                }else{
+                } else {
                     onTheMove = parseInt($('#main tr:gt(0):first').attr('id'));
                 }
-            }else{
-                prev = parseInt($('#main #'+onTheMove).prev('tr').attr('id'));
-                if(prev>=0){
+            } else {
+                prev = parseInt($('#main #' + onTheMove).prev('tr').attr('id'));
+                if (prev >= 0) {
                     onTheMove = prev;
-                }else{
+                } else {
                     onTheMove = parseInt($('#main tr:last').attr('id'));
                 }
             }
             $('#main tr td').removeClass('checked');
-            $("#main tr[id='"+onTheMove+"'] td").addClass('checked');
-            $.scrollTo($("#main tr[id='"+onTheMove+"'] td"),{offset:-100, duration:100});
+            $("#main tr[id='" + onTheMove + "'] td").addClass('checked');
+            $.scrollTo($("#main tr[id='" + onTheMove + "'] td"), {
+                offset: -100,
+                duration: 100
+            });
             return onTheMove;
         }
 
-        function getNext(){
-            if(getSelected().length!=0){
+        function getNext() {
+            if (getSelected().length != 0) {
                 next = getNextSelectedFromCurrent();
-            }else{
+            } else {
                 next = parseInt($('#main .current').next('tr').attr('id'));
             }
-            if(next>=0){
+            if (next >= 0) {
                 return next;
-            }else{
+            } else {
                 return parseInt($('#main tr:gt(0):first').attr('id'));
             }
         }
-        
-        function previousSong(){
+
+        function previousSong() {
             prev = parseInt($('#main .current').prev('tr').attr('id'));
-            if(prev>=0){
+            if (prev >= 0) {
                 //pass
-            }else{
+            } else {
                 prev = parseInt($('#main tr:last').attr('id'));
             }
             track(prev);
         }
 
-        function track(nr){
-            if(nr<=kokku){
+        function track(nr) {
+            if (nr <= kokku) {
                 hetkel = nr;
                 loadNewVideo(songs[hetkel].watch);
                 setSongtitle(songs[hetkel].title, songs[hetkel].watch);
@@ -361,80 +375,78 @@
             }
         }
 
-        function getSelected(false_list){
-            if (false_list){
-                old = $("#main tr[id='"+hetkel+"'] input[type=checkbox]").attr('checked');
-                $("#main tr[id='"+hetkel+"'] input[type=checkbox]").attr('checked','true');
+        function getSelected(false_list) {
+            if (false_list) {
+                old = $("#main tr[id='" + hetkel + "'] input[type=checkbox]").attr('checked');
+                $("#main tr[id='" + hetkel + "'] input[type=checkbox]").attr('checked', 'true');
             }
-            selected =  $("#main input[type=checkbox][checked!=false]").toArray();
-            if (false_list){
-                $("#main tr[id='"+hetkel+"'] input[type=checkbox]").attr('checked',old);
+            selected = $("#main input[type=checkbox][checked!=false]").toArray();
+            if (false_list) {
+                $("#main tr[id='" + hetkel + "'] input[type=checkbox]").attr('checked', old);
             }
             return selected;
         }
-        function anySelected(){
-            if(getSelected().length){
+
+        function anySelected() {
+            if (getSelected().length) {
                 return 1;
             }
             return 0;
         }
-        
-        function getNextSelectedFromCurrent(){
+
+        function getNextSelectedFromCurrent() {
             selected = getSelected(1);
             passed_current = false;
             modded = false;
             next = hetkel;
-            $.each(selected, function(i,e){
-                if(passed_current === true && modded === false){
+            $.each(selected, function(i, e) {
+                if (passed_current === true && modded === false) {
                     next = parseInt($(e).attr('id'));
                     modded = true;
                 }
-                if(parseInt($(e).attr('id')) == hetkel){
-                        passed_current =true;
+                if (parseInt($(e).attr('id')) == hetkel) {
+                    passed_current = true;
                 }
             });
-            if(modded === false){
+            if (modded === false) {
                 next = parseInt($("#main input[type=checkbox][checked!=false]:first").attr('id'));
             }
             return next;
         }
 
-        function getPlaylist(){
-            if(anySelected()==0){
+        function getPlaylist() {
+            if (anySelected() == 0) {
                 return;
             }
             url = '';
-            $('#main input[type=checkbox]').each(function(){
-                if($(this).attr('checked')){
-                    url+=$(this).val()+',';
+            $('#main input[type=checkbox]').each(function() {
+                if ($(this).attr('checked')) {
+                    url += $(this).val() + ',';
                 }
             })
-            if(url != ''){
-                url = url.substring(0, url.length-1)
-                location.href='?create_playlist='+url
+            if (url != '') {
+                url = url.substring(0, url.length - 1)
+                location.href = '?create_playlist=' + url
             }
         }
 
-        function shuffle(){
-            <?php
-                $tmp = $_GET;
-                $tmp['shuffle'] = 'true';
-                echo "location.href='?". http_build_query($tmp, '', '&') ."';\n";
-            ?>
+        function shuffle() { <?php
+            $tmp = $_GET;
+            $tmp['shuffle'] = 'true';
+            echo "location.href='?".http_build_query($tmp, '', '&')."';\n"; ?>
         }
 
-        function toggleLayout(){
-            <?php
-                $tmp = $_GET;
-                $tmp['toggleLayout'] = 'true';
-                echo "location.href='?". http_build_query($tmp, '', '&') ."';\n";
-            ?>
+        function toggleLayout() { <?php
+            $tmp = $_GET;
+            $tmp['toggleLayout'] = 'true';
+            echo "location.href='?".http_build_query($tmp, '', '&')."';\n"; ?>
         }
-        function setformat(){
+
+        function setformat() {
             format = $('#format').val();
             return false; //Don't POST form
         }
-        </script> 
+    </script> 
  </head> 
 <body>
 <div id="header">  
@@ -652,16 +664,12 @@ echo <<<END
 END;
 ?>
     <script type="text/javascript">
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");
+        document.write(unescape("%3Cscript src='//" + gaJsHost + ".google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
     </script>
     <script type="text/javascript">
         try {
             var pageTracker = _gat._getTracker("UA-260300-10");
-            pageTracker._addOrganic("Neti","query");
-            pageTracker._addOrganic("Yammy","q");
-            pageTracker._addOrganic("www.ee","query");
-            pageTracker._addOrganic("Delfi","q");
             pageTracker._initData();
             pageTracker._trackPageview();
         } catch(err) {}

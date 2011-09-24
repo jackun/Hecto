@@ -49,16 +49,16 @@ while($row=mysql_fetch_assoc($ret)){
 }
 $next_link = false;
 $prev_link = false;
-if($rows_count>LEHEL){
+if($rows_count > LEHEL) {
     $next_link = true;
     array_pop($rows_php);
 }
 
-if($start>=LEHEL){
+if($start >= LEHEL){
     $prev_link = true;
 }
 
-if(isset($_GET['shuffle'])){
+if(isset($_GET['shuffle'])) {
     shuffle($rows_php);
 }
 $rows_json = json_encode($rows_php);
