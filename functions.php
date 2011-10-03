@@ -59,7 +59,7 @@ function getformat() {
 }
 
 function set_bkey($value){
-    $bkey = substr(mysql_escape_string($value), 0, 32);
+    $bkey = mysql_escape_string(substr($value, 0, 32));
     setcookie("h2bkey", $bkey, time()+60*60*24*365*5);
 }
 

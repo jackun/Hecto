@@ -16,7 +16,8 @@
                 data: {
                     plugin    : true,
                     bookmark  : tabUrl,
-                    pluginkey : bkey
+                    pluginkey : bkey,
+                    version   : get_version()
                 },
                 success: function(transport){
                     var resp = JSON.parse(transport),
