@@ -199,7 +199,7 @@ function orderby($mis) {
     $tmp['order'] = $mis;
     $sort = 'asc';
     if(!isset($_GET['sort'])){
-        $_GET['sort'] == $sort;
+        $_GET['sort'] = $sort;
     }
     $tmp['sort'] = $sort == 'asc'?'desc':'asc';
     return "?". http_build_query($tmp, '', '&');
