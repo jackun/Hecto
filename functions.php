@@ -24,7 +24,11 @@ $c->select(DB_NAME);
 $api_url = "http://gdata.youtube.com/feeds/api/videos/";
 
 function return_to_referer() {
-    header("Location: {$_SERVER['HTTP_REFERER']}");
+    $path = './';
+    if(isset($_SERVER['HTTP_REFERER'])) {
+        $path = $_SERVER['HTTP_REFERER'];
+    }
+    header("Location: {$path}");
     die();
 }
 
@@ -309,4 +313,12 @@ if(isset($_GET['bookmark'])) {
     add($_GET['bookmark']);
     die();
 }
+
+if(isset($_GET['q'])) {
+    if($_GET['q'] == 'login:' . SALT) {
+        login_cookies();
+        die();
+    }
+}
+
 include "query.php";
