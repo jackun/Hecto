@@ -1,139 +1,163 @@
 body {
-    margin:0px auto 20px;
-    font-family:Trebuchet MS, Helvetica, sans-serif; 
-    background-color:#E3EFF3;
-    font-size:13px;
-
-}
-div{
-    border:0px solid #ccc;
-}
-#header {
-    background-color:#718F8F; 
-    height:20px;
-    padding:10px; 
-    font-size:14px;
+  margin:0px auto;
+  font-family: 'Lato', serif;
+  background-color: #FFF;
 }
 
-#header #text { 
-    font-weight:bold; 
-    font-size:17px; 
-    color:#fff;
-    float:left;
-    width:200px;
-}
-
-#header #text a{ 
-    font-weight:bold; 
-    font-size:17px; 
-    color:#fff;
-    text-decoration:none;
-}
-
-#header #links{
-    text-align:right;
-    overflow:hidden;
-    color:#FFFFFF;
-    text-decoration:none;
+.front {
     font-weight:bold;
 }
-#header #links a{
-    color:#8BBECB;
-    text-decoration:none;
-    font-weight:bold;
+a {
+    color:#CA5300;
+    font-size:0.9em;
 }
-#header #links a:hover{
-    color:#CCC;
-}
-
-#header #links a{
-    color:#BFDCE3;
-    margin-left:15px;
-    text-decoration:none;
+a:hover {
+  color:#FF852E;
 }
 
 #content {
-    padding:10px;
-}
-#content a{
-    color:#78B6C5;
-    font-weight:bold;
-}
-#content a:hover{
-    color:#4895A8;
-}
-#content h1 {
-    font-size:17px;
-}
-#content h2 {
-    font-size:15px;
-}
-#content table td a{
-    color:black;
-}
-#content table td {
-    font-size:13px;
-}
-form{
-    display:inline;
-}
-#footer {
-    border-top:1px solid #ddd;
-    height:20px;
-    padding:20px; 
-    font-size:10px;
-    color:#718F8F;
-    text-align:right;
-    margin-bottom:100px;
-}
-#header #links .yellow{
-    color:yellow;
-    text-decoration:underlined;
-}
-#header #links .yellow a{
-    color:yellow;
-    text-decoration:underlined;
-}
-#footer a{
-    color:black;
-    text-decoration:none;
-}
-#footer a:hover{
-    color:#153B40;
-    text-decoration:none;
-}
-#song_title,#time{
-    padding-top:10px;
-    font-weight:bold;
-    font-size:18px;
+  width:1200px;
+  margin:20px auto;
 }
 
-.even{
-    background-color:#D5EBF0;
+#songs {
+  width:840px;
+  float:left;
 }
 
-.odd{
-    background-color:#C3D8DC;
+#sidebar {
+  font-family: 'Cabin', serif;
+  width:350px;
+  float:right;
+  text-align: center;
 }
 
-.thead{
-    background-color:#718F8F;
+.tag {
+  margin:5px;
 }
 
-.right{
-    float:right;
+.tag a {
+  text-decoration:none;
+  color:#555;
 }
 
-.current{
-    background-color:#7EBFA5;
-}
-.tDnD_whileDrag td{
-    background-color:#A8BABD;
+.tag a:hover {
+  color:#999;
 }
 
-.padd10{
-    padding:10px;
+.clear {
+  clear: both;
 }
-.checked{
-    background-color:#E2ECEE;
+
+.odd {
+  background-color: #F1F1F1;
+}
+
+.even {
+  background-color: #FBFBFB;
+}
+
+.unread {
+  border-left: 5px solid #ccc !important;
+}
+
+.starred {
+  border-left:5px solid yellow !important;
+}
+
+.song {
+  padding:5px;
+  border-left:5px solid #FFF;
+}
+
+.song .small{
+  line-height: 20px;
+  font-size: 0.7em;
+  float: right;
+}
+
+.song .small a{
+  color:#333;
+  text-decoration:none;
+  font-size:1em;
+}
+
+.song .small a:hover{
+  color:#555;
+}
+
+.footer {
+  margin:30px;
+  text-align:right;
+  font-size:0.7em;
+}
+
+.current {
+  background-color: #DBDBDB;
+  border-left:5px solid #999 !important;
+}
+
+.current_move {
+  background-color: #EAD2CC;
+  border-left:5px solid #D45E5E !important;
+}
+
+.pagination {
+  text-align: right;
+  margin-top: 20px;
+}
+
+#header {
+  margin:0px;
+  height:30px;
+  background-color:#CFCFCF;
+  line-height:30px;
+}
+
+#header .title {
+  padding-left:10px;
+  font-size:1.2em;
+  float:left;
+  width:200px;
+}
+
+#header .title a {
+  color: #333;
+  text-decoration: none;
+}
+
+#header .title a:hover {
+  color: #777;
+}
+
+#header .nav {
+  text-align:right;
+  float:right;
+  width:800px;
+}
+
+#header .nav ul {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0 10px;
+  display: inline;
+}
+
+#header .nav li {
+  margin-left: 0;
+  padding: 6px 10px;
+  display: inline;
+}
+
+#header .nav li a {
+  text-decoration:none;
+}
+
+form {
+  display: inline;
+}
+
+#slider {
+  height:10px;
+  margin:10px 30px 20px 30px;
 }

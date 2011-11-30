@@ -265,8 +265,8 @@ if(isset($_GET['create_playlist'])) {
     header("Location: ?p={$id}");
 }
 
-if(isset($_GET['addPlay'])) {
-    $c->q("update videos set plays=plays+1 where watch='".mysql_escape_string($_GET['addPlay'])."' limit 1;");
+if(isset($_GET['add_one_play'])) {
+    $c->q("update videos set plays=plays+1 where watch='".mysql_escape_string($_GET['add_one_play'])."' limit 1;");
     die();
 }
 if(isset($_GET['erroneous'])) {
