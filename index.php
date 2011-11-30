@@ -2,7 +2,7 @@
     include "functions.php"; 
     $time_start = microtime_float();
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html public '❄'>
 <html> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
