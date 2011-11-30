@@ -63,13 +63,13 @@ function getformat() {
 }
 
 function set_bkey($value){
-    $bkey = mysql_escape_string(substr($value, 0, 32));
+    $bkey = mysql_real_escape_string(substr($value, 0, 32));
     setcookie("h2bkey", $bkey, time()+60*60*24*365*5);
 }
 
 function get_bkey(){
     if(isset($_GET['pluginkey'])){
-        $bkey = mysql_escape_string($_GET['pluginkey']);
+        $bkey = mysql_real_escape_string($_GET['pluginkey']);
         if(trim($bkey) == ""){
             $bkey = get_new_uniq_row('videos', 'bkey');
         }
@@ -94,39 +94,42 @@ function bookmark($msg, $watch = '') {
     }
     $time = time();
     $javascript = <<<END
-var shown = false,
-    by_id = function (id){
-        return document.getElementById(id);
-    },
-    hidem = function(){
-        document.body.removeChild(by_id('h2bg1'));
-        document.body.removeChild(by_id('h2bg2'));
-        shown = false;
-    },
-    clbk{$time} = function (dic) {
-        if(shown != true) {
-            shown = true;
-            var d = document.createElement('div');
-            var style = 'text-align:center;position:absolute;top:0;left:0;background:#333;filter:alpha(opacity=70);-moz-opacity:0.7;-khtml-opacity: 0.7;opacity: 0.7;width: 100%; height: 100px; z-index: 30003;';
-            d.setAttribute('id','h2bg1');
-            d.setAttribute('style',style);
-            d.setAttribute('onClick','hidem()');
-            document.body.appendChild(d);
+(function(msg){
+    var shown = false,
+        by_id = function (id){
+            return document.getElementById(id);
+        },
+        hidem = function(){
+            document.body.removeChild(by_id('h2bg1'));
+            document.body.removeChild(by_id('h2bg2'));
+            shown = false;
+        },
+        clbk{$time} = function (dic) {
+            if(shown != true) {
+                shown = true;
+                var d = document.createElement('div');
+                var style = 'text-align:center;position:absolute;top:0;left:0;background:#333;filter:alpha(opacity=70);-moz-opacity:0.7;-khtml-opacity: 0.7;opacity: 0.7;width: 100%; height: 100px; z-index: 30003;';
+                d.setAttribute('id','h2bg1');
+                d.setAttribute('style',style);
+                document.body.appendChild(d);
 
-            var d = document.createElement('div');
-            var style = "text-align:center;position:absolute;top:0;left:0;z-index: 40003;width:100%;margin-top:20px;font-size:50px;font-weight:bold;color:#fff;font-family:'Trebuchet MS', sans-serif;";
-            d.setAttribute('id','h2bg2');
-            d.setAttribute('style',style);
-            d.setAttribute('onClick','hidem()');
-            document.body.appendChild(d);
-            by_id('h2bg2').innerHTML = dic.msg;
-        }
-    };
-
+                var d = document.createElement('div');
+                var style = "text-align:center;position:absolute;top:0;left:0;z-index: 40003;width:100%;margin-top:20px;font-size:50px;font-weight:bold;color:#fff;font-family:'Trebuchet MS', sans-serif;";
+                d.setAttribute('id','h2bg2');
+                d.setAttribute('style',style);
+                document.body.appendChild(d);
+                by_id('h2bg2').innerHTML = dic.msg;
+            }
+            setTimeout(hidem, 5000);
+        };
+        clbk{$time}(msg);
+})
 END;
-   $call = json_encode(array('msg' => $msg));;
-   $call = "clbk{$time}({$call});";
-   die($javascript.$call);
+   $call = json_encode(array(
+        'msg' => $msg,
+        'watch' => $watch
+    ));;
+   die("$javascript($call)");
 }
 
 function add($video) {
@@ -147,7 +150,7 @@ function add($video) {
     }
 
     if($watch) {
-        $q = "SELECT count(watch) FROM videos WHERE watch = '".(mysql_escape_string($watch))."'";
+        $q = "SELECT count(watch) FROM videos WHERE watch = '".(mysql_real_escape_string($watch))."'";
         $ret = mysql_fetch_array($c->q($q));
         if($ret[0] != 0){
             if(!isset($_GET['bookmark'])){
@@ -266,11 +269,11 @@ if(isset($_GET['create_playlist'])) {
 }
 
 if(isset($_GET['add_one_play'])) {
-    $c->q("update videos set plays=plays+1 where watch='".mysql_escape_string($_GET['add_one_play'])."' limit 1;");
+    $c->q("update videos set plays=plays+1 where watch='".mysql_real_escape_string($_GET['add_one_play'])."' limit 1;");
     die();
 }
 if(isset($_GET['erroneous'])) {
-    $c->q("update videos set erroneous=erroneous+1 where watch='".mysql_escape_string($_GET['erroneous'])."' limit 1;");
+    $c->q("update videos set erroneous=erroneous+1 where watch='".mysql_real_escape_string($_GET['erroneous'])."' limit 1;");
     die();
 }
 if(isset($_GET['toggleLayout'])) {

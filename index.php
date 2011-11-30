@@ -335,8 +335,7 @@
         }
 
         function get_checked() {
-            var checked = $('.checkbox:checked');
-            return checked;
+            return $('.checkbox:checked');
         }
 
         function get_next() {
@@ -429,10 +428,11 @@
                 if($i%2){
                     $class = ' odd';
                 }
+                $bkey = mysql_real_escape_string($row['bkey']);
                 echo "<div class='song{$class}' id='song-{$i}' data-id='{$i}'>";
                 echo "<input class=checkbox name='playlist' value='{$row['id']}' id='check-{$i}' data-id='{$i}' type=checkbox>&nbsp;&nbsp;";
                 echo "<a href='#{$row['watch']}' onclick='play_track_no({$i})'>{$row['title']}</a>";
-                echo " <span class='small'>{$row['time']}</span>";
+                echo " <span class='small'><a href='?bkey={$bkey}'>{$bkey}</a> {$row['time']}</span>";
                 // if(loggedin()){
                 //     echo "<td>{$row['plays']}</td>";
                 //     echo "<td>{$row['erroneous']}</td>";
@@ -472,12 +472,14 @@
 
         <br><br>
         <div>
+            <?php /*
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
             echo $_SERVER['HTTP_HOST'] . $dir;
             ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
+
             <br />
-                or use this <a href="//<?php
+                or */?>use this <a href="//<?php
                 echo $_SERVER['HTTP_HOST'] . $dir . '/hecto.crx';
             ?>">Google Chrome extension</a>
         </div>
