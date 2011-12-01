@@ -6,7 +6,7 @@
 <html> 
   <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    <title><?php echo PROG_NAME;?></title> 
+    <title>Hecto</title>
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="style.css">
@@ -15,30 +15,27 @@
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script> 
+    <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
     <script src="http://www.google.com/jsapi"></script> 
     <script type="text/javascript">
         google.load("swfobject", "2.1");
         var ytplayer = null,
+            idx = 0,
             format = '<?php echo getformat();?>',
-            songs = <?php echo $rows_json; ?>,
-            hetkel = <?php echo $hetkel; ?>,
-            kokku = songs.length,
-            kontroll = '',
-            cued = hetkel,
+            current_check = '',
             notseeking = true,
-            autoplay = <?php echo AUTOPLAY ?>,
-            l = location.href;
+            autoplay = <?php echo AUTOPLAY ?>;
 
-        if (l.indexOf('#') > -1) {
-            watch = l.substring(l.indexOf('#') + 1, l.length);
-            for (var i = 0; i < songs.length; i++) {
-                if (songs[i].watch == watch) {
-                    hetkel = i;
-                    break;
-                }
-            }
-        }
         $(document).ready(function() {
+            var l = location.hash;
+            if (l.indexOf('#') === 0) {
+                $('.song').each(function(i,e){
+                    if($(e).data('watch') === l.substring(1)) {
+                        set_current(l.substring(1));
+                    }
+                });
+            }
+
             $("#slider").progressbar({value: 0});
             $('#slider').slider({
                 value: 0,
@@ -62,6 +59,14 @@
             }, function() {
                 $(this).fadeTo(100, 1);
             });
+            var $shuffle = $('#shuffle');
+            if(cookie('shuffle') === '1') {
+                $shuffle.prop('checked', true);
+            }
+
+            $shuffle.on('change', function(){
+                update_cookies('shuffle');
+            });
 
             $(document).bind('keypress', function(e) {
                 target = (e.target && e.target.type) || 'other';
@@ -75,27 +80,49 @@
                         keyboard_move(1);
                     } else if (e.which == 107 || e.which == 75) { //K
                         keyboard_move();
+                    } else if (e.which == 115 || e.which == 83) { //K
+                        toggle_shuffle();
                     } else if (e.which == 120 || e.which == 88) { //X
                         var current = get_current(1);
                         if(current.length) {
-                            var id = current.data('id')
-                            $('#check-' + id).prop('checked', function(e) {
-                                this.checked = !this.checked;
-                            });
+                            current.children('.checkbox:first').prop(
+                                'checked', function(e) {
+                                    this.checked = !this.checked;
+                                }
+                            );
                         }
                     } else if (e.which == 13) {
                         play_keyboard_track();
                     }
                 }
             });
+            $('#songs').infinitescroll({
+                navSelector  : "div.pagination",
+                nextSelector : "div.pagination a:first",
+                itemSelector : "#songs div.song",
+                pathParse    : function() {
+                    return ['?page=', ''];
+                },
+                loading : {
+                    msgText      : 'Loading MOAR...',
+                }
+            });
         });
 
-        function add_one_play(id) {
-            if (kontroll == id) {
+        $.fn.get_random = function(){
+          var len = this.length,
+              ran = Math.random() * len;
+          if(len) {
+            return $(this[Math.floor(ran)]);
+          }
+        }
+
+        function add_one_play(watch) {
+            if (current_check == watch) {
                 $.ajax({
                     type: "GET",
                     url: "<?php echo $_SERVER['PHP_SELF'];?>",
-                    data: "add_one_play=" + id
+                    data: "add_one_play=" + watch
                 });
             }
         }
@@ -117,12 +144,12 @@
             setInterval(update_payer_info, 500);
             ytplayer.addEventListener('onStateChange', 'on_player_state_change');
             ytplayer.addEventListener('onError', 'on_player_error');
-            volume = parseInt(cookie('volume'));
+            volume = parseInt(cookie('volume'), 10);
             if (volume) {
                 ytplayer.setVolume(volume);
             }
             if (autoplay) {
-                play_track_no(hetkel);
+                play_track_no(get_current_watch())
             }
         }
 
@@ -130,7 +157,7 @@
             if (newState === 0) {
                 setTimeout(function() {
                     play_next();
-                }, 500);
+                }, 1000);
             }
         }
 
@@ -138,7 +165,7 @@
             $.ajax({
                 type: "GET",
                 url: "<?php echo $_SERVER['PHP_SELF'];?>",
-                data: "erroneous=" + songs[hetkel].watch
+                data: "erroneous=" + get_current_watch()
             });
             setTimeout(function() {
                 play_next();
@@ -146,7 +173,13 @@
         }
 
         function update_payer_info() {
-            buf = "";
+            var pros,
+                pros2,
+                time_total,
+                time_now,
+                m,
+                s,
+                buf = '';
             if (ytplayer) {
                 pros = (get_song_bytes_loaded() / get_song_bytes_total()) * 100;
                 time_total = get_song_duration();
@@ -160,8 +193,7 @@
                     m = Math.floor(time_total / 60);
                     s = Math.floor(time_total % 60);
                     buf += (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-                }
-                else {
+                } else {
                     pros = pros2 = 0;
                 }
 
@@ -169,17 +201,14 @@
                 if (notseeking) {
                     $('#slider').slider('value', pros2);
                 }
-                if (get_song_current_time() > get_song_duration() - 10 && cued != hetkel) {
-                    cued = hetkel;
-                }
             }
             $('#time').html(buf);
         }
 
         function b2KMGb(bytes) {
-            units = ['b', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
-            n = 0;
-            unit = units[n];
+            var units = ['b', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'],
+                n = 0,
+                unit = units[n];
             while (bytes >= 1024) {
                 n += 1;
                 unit = units[n];
@@ -194,17 +223,14 @@
 
         function load_new_video(watch, startSeconds) {
             if (ytplayer) {
-                var cbw = parseInt(cookie('BW')) || 0;
-                cookie('BW', cbw + get_song_bytes_loaded());
-                $('#bw').html(b2KMGb(cbw));
-                location.href = "#" + songs[hetkel].watch;
-                ytplayer.loadVideoById(watch, parseInt(startSeconds), format);
-                kontroll = watch;
+                update_cookies('BW', get_song_bytes_loaded());
+                location.href = "#" + watch;
+                ytplayer.loadVideoById(watch, parseInt(startSeconds, 10), format);
+                current_check = watch;
                 setTimeout(function() {
                     add_one_play(watch);
                 }, 10000);
-                $('.current').removeClass('current');
-                $('.song#song-' + hetkel).addClass('current');
+                set_current(watch);
             }
         }
 
@@ -222,17 +248,19 @@
 
         function volume_up() {
             if (ytplayer) {
-                var vol = ytplayer.getVolume();
-                ytplayer.setVolume((vol + 10 > 100) ? 100 : vol + 10);
-                cookie('volume', ytplayer.getVolume());
+                var vol = ytplayer.getVolume(),
+                    value = (vol + 10 > 100) ? 100 : vol + 10;
+                ytplayer.setVolume(value);
+                update_cookies('volume', value);
             }
         }
 
         function volume_down() {
             if (ytplayer) {
-                var vol = ytplayer.getVolume();
-                ytplayer.setVolume((vol - 10 < 0) ? 0 : vol - 10);
-                cookie('volume', ytplayer.getVolume());
+                var vol = ytplayer.getVolume(),
+                    value = (vol - 10 < 0) ? 0 : vol - 10
+                ytplayer.setVolume(value);
+                update_cookies('volume', value);
             }
         }
 
@@ -284,15 +312,30 @@
             }
         }
 
+        function update_cookies(what, value) {
+            if(what === 'shuffle') {
+                cookie('shuffle', $('#shuffle').prop('checked')?'1':'0');
+            } else if(what === 'volume' && value) {
+                cookie('volume', value);
+            } else if(what === 'BW' && value) {
+                var cbw = parseInt(cookie('BW'), 10) || 0;
+                cookie('BW', cbw + value);
+                $('#bw').html(b2KMGb(cbw));
+            }
+        }
+
         function update_song_title() {
-            document.title = songs[hetkel].title + ' - <?php echo PROG_NAME;?>';
-            $('#song_title').text(songs[hetkel].title);
+            var title = get_current().data('title');
+            if(title) {
+                document.title = title + ' - Hecto';
+                $('#song_title').html(title);
+            }
         }
 
         function play_keyboard_track() {
             var current = get_current(1);
             if(current.length) {
-                play_track_no(current.data('id'));
+                play_track_no(current.data('watch'));
             }
         }
         function get_scroll_offset() {
@@ -318,6 +361,19 @@
             return next;
         }
 
+        function set_current(watch) {
+            $('.current').removeClass('current');
+            $('.song#song-' + watch).addClass('current');
+            idx = get_current().data('idx');
+        }
+
+        function get_current_watch(){
+            var current = get_current();
+            if(current.length) {
+                return current.data('watch');
+            }
+        }
+
         function get_current(move) {
             var current;
             if(move) {
@@ -341,7 +397,7 @@
         function get_next() {
             var checked = get_checked();
             if(checked.length) {
-                var next = $('.checkbox:gt(' + hetkel + '):checked');
+                var next = $('.checkbox:gt(' + idx + '):checked');
                 if(!next.length) {
                     next = checked;
                 }
@@ -353,7 +409,7 @@
         function get_prev() {
             var checked = get_checked();
             if(checked.length) {
-                var prev = $('.checkbox:lt(' + hetkel + '):checked');
+                var prev = $('.checkbox:lt(' + idx + '):checked');
                 if(!prev.length) {
                     prev = checked;
                 }
@@ -362,15 +418,43 @@
             return get_current().prev('.song')
         }
 
+        function toggle_shuffle() {
+            $('#shuffle').prop('checked', function(e) {
+                this.checked = !this.checked;
+            });
+            update_cookies('shuffle');
+        }
+
+        function get_shuffle() {
+          var current = get_current(),
+              checked = get_checked(),
+              next;
+          if(checked.length) {
+            next = checked;
+          } else {
+            next = $('.song');
+          }
+          next = next.get_random();
+          if(next.length) {
+            return next;
+          }
+        }
+
         function play_next() {
-            var current = hetkel,
+            var current = get_current_watch(),
+                next;
+            if($('#shuffle').prop('checked')) {
+                next = get_shuffle();
+            } else {
                 next = get_next();
+            }
+
             if(next.length) {
-                var id = next.data('id');
-                if(id == current) {
+                var watch = next.data('watch');
+                if(watch === current) {
                     seek_to(0);
                 } else {
-                    play_track_no(id);
+                    play_track_no(watch);
                 }
             }
         }
@@ -378,16 +462,15 @@
         function play_prev() {
             var prev = get_prev();
             if(prev.length) {
-                var id = prev.data('id');
+                var id = prev.data('watch');
                 play_track_no(id);
             }
         }
 
-        function play_track_no(nr) {
-            if (nr <= kokku) {
-                hetkel = nr;
-                load_new_video(songs[hetkel].watch);
-                update_song_title(songs[hetkel].title, songs[hetkel].watch);
+        function play_track_no(watch) {
+            if (watch) {
+                load_new_video(watch);
+                update_song_title();
             }
         }
 
@@ -409,7 +492,7 @@
 <body>
 <div id="header">
     <div class="title">
-        <a href='./'><?php echo PROG_NAME;?></a>
+        <a href='./'>Hecto</a>
     </div>
     <div class='nav'>
         <ul>
@@ -422,17 +505,18 @@
 <div id='content'>
     <div id='songs'>
         <?php if(count($rows_php)>0){
-            $i = 0;
+            $i = $start;
             foreach($rows_php as $row) {
                 $class = ' even';
                 if($i%2){
                     $class = ' odd';
                 }
-                $bkey = mysql_real_escape_string($row['bkey']);
-                echo "<div class='song{$class}' id='song-{$i}' data-id='{$i}'>";
-                echo "<input class=checkbox name='playlist' value='{$row['id']}' id='check-{$i}' data-id='{$i}' type=checkbox>&nbsp;&nbsp;";
-                echo "<a href='#{$row['watch']}' onclick='play_track_no({$i})'>{$row['title']}</a>";
-                echo " <span class='small'><a href='?bkey={$bkey}'>{$bkey}</a> {$row['time']}</span>";
+                $current_bkey = mysql_real_escape_string($row['bkey']);
+                $title = htmlspecialchars($row['title']);
+                echo "<div class='song{$class}' id='song-{$row['watch']}' data-idx=\"{$i}\" data-watch=\"{$row['watch']}\" data-title=\"{$title}\">";
+                echo "<input class=checkbox name='playlist' value='{$row['id']}' data-watch=\"{$row['watch']}\" type=checkbox>&nbsp;&nbsp;";
+                echo "<a href='#{$row['watch']}' onclick='play_track_no(\"{$row['watch']}\")'>{$row['title']}</a>";
+                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}</span>";
                 // if(loggedin()){
                 //     echo "<td>{$row['plays']}</td>";
                 //     echo "<td>{$row['erroneous']}</td>";
@@ -446,8 +530,8 @@
         }
         print '<div class=pagination>';
         if($next_link){
-            $_GET['start'] = $start + LEHEL;
-            echo " <a href='?". http_build_query($_GET, '', '&') ."'>MOAR >>> </a>";
+            $_GET['page'] = $page + 1;
+            echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";
         }
         print '</div>';
         ?>
@@ -471,6 +555,8 @@
         <a href="javascript:void(0);" onclick="play_next();"><img src='images/next.png' border=0></a>
 
         <br><br>
+        <label for=shuffle>Shuffle</label> <input type=checkbox id=shuffle>
+
         <div>
             <?php /*
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php

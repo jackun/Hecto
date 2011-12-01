@@ -1,5 +1,12 @@
 <?php
-$start = isset($_GET['start'])?((int)$_GET['start']>0?(int)$_GET['start']:0):0;
+$page = 1;
+if(isset($_GET['page'])) {
+    $tmp_page = (int)$_GET['page'];
+    if($tmp_page > 0) {
+        $page = $tmp_page;
+    }
+}
+$start = $page * LEHEL - LEHEL;
 
 $q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
 if(isset($_GET['p'])){

@@ -9,7 +9,7 @@ if(file_exists(LIVE_CONFIG)) {
     define("DB_NAME",     "hecto");
     define('PROG_NAME',   "Hecto");
     define('SALT',        "kdjhfkjsfdhsdfhksdksjf");
-    define('LEHEL', 200);
+    define('LEHEL', 100);
     define('DEFAULT_FORMAT', 'default');
     define('AUTOPLAY', 'false');
 }
