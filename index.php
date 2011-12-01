@@ -346,9 +346,9 @@
             var current = get_current(1),
                 next;
             if (down) {
-                next = current.next('.song');
+                next = current.nextAll('.song:first');
             } else {
-                next = current.prev('.song');
+                next = current.prevAll('.song:first');
             }
             if(next.length) {
                 $('.current_move').removeClass('current_move');
@@ -403,7 +403,7 @@
                 }
                 return next.first();
             }
-            return get_current().next('.song')
+            return get_current().nextAll('.song:first')
         }
 
         function get_prev() {
@@ -415,7 +415,7 @@
                 }
                 return prev.last();
             }
-            return get_current().prev('.song')
+            return get_current().prevAll('.song:first')
         }
 
         function toggle_shuffle() {
