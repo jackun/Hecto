@@ -225,7 +225,7 @@
             var title = get_current().data('title');
             if (title) {
                 document.title = title + ' - Hecto';
-                $('#song_title').html(title);
+                $('.song_title').html(title);
             }
         }
 
@@ -252,7 +252,7 @@
                     $('#slider').slider('value', pros2);
                 }
             }
-            $('#time').html(buf);
+            $('.song_time').html(buf);
         }
 
         function load_new_video(watch, startSeconds) {
@@ -358,10 +358,7 @@
             return next;
         }
 
-
-
-
-        function get_prev() {
+       function get_prev() {
             var checked = get_checked();
             if (checked.length) {
                 var prev = $('.checkbox:lt(' + idx + '):checked');
@@ -446,6 +443,9 @@
                 update_cookies('shuffle');
             });
 
+            var bw = cookie('BW');
+            $('#bw').html(b2KMGb(bw));
+
             $(document).bind('keypress', function(e) {
                 var target = (e.target && e.target.type) || 'other';
                 if (target != 'text' && target != 'submit') {
@@ -493,11 +493,34 @@
         <a href='./'>Hecto</a>
     </div>
     <div class='nav'>
-        <ul>
-            <li id='song_title'>&nbsp;</li>
-            <li id='time'>&nbsp;</li>
-        </ul>
+      <ul>
+        <li>
+          <form method='GET'>
+            Search: <input class=q name=q size=15 value="<?php
+              if(isset($_GET['q'])){
+                echo htmlspecialchars($_GET['q']);
+              }
+            ?>">
+          </form>
+        </li>
+        <?php
+          if(loggedin()){
+            print "<li><a href='?logout=1'>Logout</li>";
+          }
+        ?>
+      </ul>
     </div>
+</div>
+
+<div class='bottom-bar'>
+    <a href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png' border=0></a>
+    <a href="javascript:void(0);" onclick="play_pause();"><img src='images/pause.png' id=play border=0></a>
+    <a href="javascript:void(0);" onclick="volume_mute();"><img src='images/unmute.png' id=mute border=0></a>
+    <a href="javascript:void(0);" onclick="volume_up();"><img src='images/vol_up.png' border=0></a>
+    <a href="javascript:void(0);" onclick="volume_down();"><img src='images/vol_down.png' border=0></a>
+    <a href="javascript:void(0);" onclick="play_next();"><img src='images/next.png' border=0></a>
+    <div class='song_time'>&nbsp;</div>
+    <div class='song_title'>&nbsp;</div>
 </div>
 
 <div id='content'>
@@ -514,14 +537,11 @@
                 echo "<div class='song{$class}' id='song-{$row['watch']}' data-idx=\"{$i}\" data-watch=\"{$row['watch']}\" data-title=\"{$title}\">";
                 echo "<input class=checkbox name='playlist' value='{$row['id']}' data-watch=\"{$row['watch']}\" type=checkbox>&nbsp;&nbsp;";
                 echo "<a href='#{$row['watch']}' onclick='play_track_no(\"{$row['watch']}\")'>{$row['title']}</a>";
-                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}</span>";
-                // if(loggedin()){
-                //     echo "<td>{$row['plays']}</td>";
-                //     echo "<td>{$row['erroneous']}</td>";
-                //     echo "<td>{$row['bkey']}</td>";
-                //     echo "<td><a href='?delete={$row['id']}'>delete</a></td>";
-                // }
-                echo "</div>";
+                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}";
+                if(loggedin()){
+                    echo " | {$row['plays']} | {$row['erroneous']} | <a href='?delete={$row['id']}'>delete</a>";
+                }
+                echo "</span></div>";
                 $i++;
             }
             // if(!isset($_GET['p'])){ echo "<input type='button' value='Create playlist' onclick='create_playlist()'>";}
@@ -544,60 +564,48 @@
         </script> 
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
         <div id='slider'></div>
-
-        <a href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png' border=0></a>
-        <a href="javascript:void(0);" onclick="play_pause();"><img src='images/pause.png' id=play border=0></a>
-        <a href="javascript:void(0);" onclick="volume_mute();"><img src='images/unmute.png' id=mute border=0></a>
-        <a href="javascript:void(0);" onclick="volume_up();"><img src='images/vol_up.png' border=0></a>
-        <a href="javascript:void(0);" onclick="volume_down();"><img src='images/vol_down.png' border=0></a>
-        <a href="javascript:void(0);" onclick="play_next();"><img src='images/next.png' border=0></a>
-
-        <br><br>
         <label for=shuffle>Shuffle</label> <input type=checkbox id=shuffle>
 
-        <div>
-            <?php /*
+        <div class="sideblock">
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
             echo $_SERVER['HTTP_HOST'] . $dir;
             ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
 
             <br />
-                or */?>use this <a href="//<?php
+                or use this <a href="//<?php
                 echo $_SERVER['HTTP_HOST'] . $dir . '/hecto.crx';
             ?>">Google Chrome extension</a>
         </div>
-        <br><br>
-        <div>
+
+        <div class="sideblock">
             git clone <a href="https://github.com/tanelpuhu/hecto">git://github.com/tanelpuhu/hecto.git</a>
         </div>
 
+        <div class='sideblock'>
+          <?php
+            $time_end = round(microtime_float()-$time_start, 5);
+            print sprintf("
+                ~<span id=bw>#</span> | %s | <a href='javascript:void(0);' onClick='set_key();'>%s</a>
+                ", $time_end, $bkey
+            );
+          ?>
+        </div>
     </div>
 </div>
 
 
 
-<div class='clear'></div>
-<?php
-$time_end = microtime_float()-$time_start;
-print sprintf("<div class='footer'>
-    ~<span id=bw>#</span> / %s / <a href='javascript:void(0);' onClick='set_key();'>%s</a>
-    <br>
-    <a href='http://twitter.com/tanel'>@tanel</a><br>
-    <a href='http://tanelpuhu.com'>tanelpuhu.com</a><br></div>
-    ", $time_end, $bkey
-);
-?>
-    <script type="text/javascript">
-        var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");
-        document.write(unescape("%3Cscript src='//" + gaJsHost + ".google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-    </script>
-    <script type="text/javascript">
-        try {
-            var pageTracker = _gat._getTracker("UA-260300-10");
-            pageTracker._initData();
-            pageTracker._trackPageview();
-        } catch(err) {}
-    </script>
+  <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");
+      document.write(unescape("%3Cscript src='//" + gaJsHost + ".google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+      try {
+          var pageTracker = _gat._getTracker("UA-260300-10");
+          pageTracker._initData();
+          pageTracker._trackPageview();
+      } catch(err) {}
+  </script>
   </body>
 </html>
