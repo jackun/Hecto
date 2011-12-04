@@ -5,7 +5,8 @@
 <!DOCTYPE html public '❄'>
 <html> 
   <head> 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="icon.ico" rel="icon" type="image/x-icon" />
     <title>Hecto</title>
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
