@@ -23,6 +23,7 @@ a:hover {
 #songs {
   width:840px;
   float:left;
+  margin-bottom:100px;
 }
 
 #sidebar {
