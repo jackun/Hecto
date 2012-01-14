@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script> 
     <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
-    <script src="http://www.google.com/jsapi"></script> 
+    <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("swfobject", "2.1");
         var ytplayer = null,
@@ -254,6 +254,9 @@
                 }
             }
             $('.song_time').html(buf);
+            if (ytplayer.getPlayerState() === 0) {
+                play_next();
+            }
         }
 
         function load_new_video(watch, startSeconds) {
@@ -283,7 +286,7 @@
         function onYouTubePlayerReady(playerId) {
             ytplayer = document.getElementById('myytplayer');
             setInterval(update_payer_info, 500);
-            ytplayer.addEventListener('onStateChange', 'on_player_state_change');
+            // ytplayer.addEventListener("onStateChange", "on_player_state_change");
             ytplayer.addEventListener('onError', 'on_player_error');
             var volume = parseInt(cookie('volume'), 10);
             if (volume) {
