@@ -404,6 +404,11 @@
             }
         }
 
+        function ask_credit_card() {
+            location.href = '/ytlocal/' + location.hash;
+            return false;
+        }
+
         $(document).ready(function() {
             var l = location.hash;
             if (l.indexOf('#') === 0) {
@@ -526,6 +531,12 @@
 </div>
 
 <div class="container">
+    <div style="color:red; text-align:center; margin:10px 0px">
+        Congrats!
+        You won:£720,000
+        For claims Email your
+        full name and... just kidding - click <a href='javascript:ask_credit_card();'>here</a> to also search
+    </div>
   <div class="row">
     <div class="span13" id='songs'>
         <?php if(count($rows_php)>0){
