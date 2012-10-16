@@ -1,8 +1,6 @@
-body, input {
-  margin:0px auto;
+body {
+  margin:50px auto;
   font-family: 'Lato', serif;
-  background-color: #FFF;
-  padding-top: 60px;
 }
 
 .front {
@@ -122,13 +120,6 @@ a:hover {
 .sideblock {
   margin-top:20px;
   padding: 10px;
-}
-
-.q {
-  border:0px;
-  background-color:#CFCFCF;
-  padding:3px;
-  height:21px;
 }
 
 .label {

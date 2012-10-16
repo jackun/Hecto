@@ -10,7 +10,7 @@
     <title>Hecto</title>
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-    <link href='bootstrap.css' rel='stylesheet' type='text/css'>
+    <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="style.css">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
@@ -458,7 +458,7 @@
 
             $(document).bind('keypress', function(e) {
                 var target = (e.target && e.target.type) || 'other';
-                if (target != 'text' && target != 'submit') {
+                if ('text,submit,search'.indexOf(target) === -1) {
                     if (e.which == 32) {
                         play_pause();
                         return false;
@@ -497,29 +497,26 @@
     </script>
  </head>
 <body>
-    <div class="topbar">
-      <div class="topbar-inner">
-        <div class="container">
-          <a class="brand" href="./">Hecto</a>
-          <ul class="nav secondary-nav">
-            <form method='GET'>
-              <input class=q name=q size=15 placeholder=Search value="<?php
-                  if(isset($_GET['q'])){
-                    echo htmlspecialchars($_GET['q']);
-                  }
-              ?>">
-            </form>
-            <?php
-              if(loggedin()){
-                print "<li><a href='?logout=1'>Logout</li>";
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid topbar">
+        <a class="brand" href="./">Hecto</a>
+        <form class='navbar-form pull-right' method='GET'>
+          <input class="span7" name=q size=15 placeholder=Search type=search value="<?php
+              if(isset($_GET['q'])){
+                echo htmlspecialchars($_GET['q']);
               }
-            ?>
-          </ul>
-        </div>
+          ?>">
+        </form>
+        <?php
+          if(loggedin()){
+            print "<span class='navbar-text'><a href='?logout=1'>Logout</span>";
+          }
+        ?>
       </div>
     </div>
-
-<div class='bottom-bar'>
+  </div>
+  <div class='bottom-bar'>
     <a href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png' border=0></a>
     <a href="javascript:void(0);" onclick="play_pause();"><img src='images/pause.png' id=play border=0></a>
     <a href="javascript:void(0);" onclick="volume_mute();"><img src='images/unmute.png' id=mute border=0></a>
@@ -530,15 +527,15 @@
     <div class='song_title'>&nbsp;</div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
     <div style="color:red; text-align:center; margin:10px 0px">
         Congrats!
         You won:£720,000
         For claims Email your
         full name and... just kidding - click <a href='javascript:ask_credit_card();'>here</a> to also search
     </div>
-  <div class="row">
-    <div class="span13" id='songs'>
+  <div class="row-fluid">
+    <div class="span8" id='songs'>
         <?php if(count($rows_php)>0){
             $i = $start;
             foreach($rows_php as $row) {
@@ -568,9 +565,13 @@
         print '</div>';
         ?>
     </div>
-    <div class="span5" id='sidebar'>
+    <div class="span4" id='sidebar'>
         <script type="text/javascript"> 
-            var params = { allowScriptAccess: "always", bgcolor: "#cccccc" };
+            var params = {
+              allowScriptAccess: "always",
+              bgcolor: "#cccccc",
+              wmode: "opaque"
+            };
             var atts = { id: "myytplayer" };
             swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
                          "ytapiplayer", "290", "217", "8", null, null, params, atts);
