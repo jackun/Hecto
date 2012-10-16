@@ -2,6 +2,7 @@ body, input {
   margin:0px auto;
   font-family: 'Lato', serif;
   background-color: #FFF;
+  padding-top: 60px;
 }
 
 .front {
@@ -15,21 +16,13 @@ a:hover {
   color:#FF852E;
 }
 
-#content {
-  width:1200px;
-  margin:20px auto;
-}
 
 #songs {
-  width:840px;
   float:left;
   margin-bottom:100px;
 }
 
 #sidebar {
-  font-family: 'Cabin', serif;
-  width:350px;
-  float:right;
   text-align: center;
 }
 
@@ -102,56 +95,6 @@ a:hover {
   margin-top: 20px;
 }
 
-#header {
-  margin:0px;
-  height:30px;
-  background-color:#CFCFCF;
-  line-height:30px;
-}
-
-#header .title {
-  padding-left:10px;
-  font-size:1.2em;
-  float:left;
-  width:200px;
-}
-
-#header .title a {
-  color: #333;
-  text-decoration: none;
-}
-
-#header .title a:hover {
-  color: #777;
-}
-
-#header .nav {
-  text-align:right;
-  float:right;
-  width:800px;
-}
-
-#header .nav ul {
-  list-style-type: none;
-  margin-left: 0;
-  padding: 0 10px;
-  display: inline;
-}
-
-#header .nav li {
-  margin-left: 0;
-  padding: 6px 10px;
-  display: inline;
-}
-
-#header .nav li a {
-  text-decoration:none;
-}
-
-form {
-  display: inline;
-}
-
 #slider {
   height:10px;
   margin:10px 30px 20px 30px;
@@ -186,4 +129,30 @@ form {
   background-color:#CFCFCF;
   padding:3px;
   height:21px;
+}
+
+.label {
+  padding: 1px 3px 2px;
+  font-size: 9.75px;
+  font-weight: bold;
+  color: #ffffff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-color: #bfbfbf;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-shadow: none;
+}
+.label.important {
+  background-color: #c43c35;
+}
+.label.warning {
+  background-color: #f89406;
+}
+.label.success {
+  background-color: #46a546;
+}
+.label.notice {
+  background-color: #62cffc;
 }

@@ -10,6 +10,7 @@
     <title>Hecto</title>
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='bootstrap.css' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="style.css">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
@@ -488,33 +489,30 @@
                 }
             });
         });
-
-    </script> 
- </head> 
+    </script>
+ </head>
 <body>
-<div id="header">
-    <div class="title">
-        <a href='./'>Hecto</a>
-    </div>
-    <div class='nav'>
-      <ul>
-        <li>
-          <form method='GET'>
-            Search: <input class=q name=q size=15 value="<?php
-              if(isset($_GET['q'])){
-                echo htmlspecialchars($_GET['q']);
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="container">
+          <a class="brand" href="./">Hecto</a>
+          <ul class="nav secondary-nav">
+            <form method='GET'>
+              <input class=q name=q size=15 placeholder=Search value="<?php
+                  if(isset($_GET['q'])){
+                    echo htmlspecialchars($_GET['q']);
+                  }
+              ?>">
+            </form>
+            <?php
+              if(loggedin()){
+                print "<li><a href='?logout=1'>Logout</li>";
               }
-            ?>">
-          </form>
-        </li>
-        <?php
-          if(loggedin()){
-            print "<li><a href='?logout=1'>Logout</li>";
-          }
-        ?>
-      </ul>
+            ?>
+          </ul>
+        </div>
+      </div>
     </div>
-</div>
 
 <div class='bottom-bar'>
     <a href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png' border=0></a>
@@ -527,8 +525,9 @@
     <div class='song_title'>&nbsp;</div>
 </div>
 
-<div id='content'>
-    <div id='songs'>
+<div class="container">
+  <div class="row">
+    <div class="span13" id='songs'>
         <?php if(count($rows_php)>0){
             $i = $start;
             foreach($rows_php as $row) {
@@ -541,7 +540,7 @@
                 echo "<div class='song{$class}' id='song-{$row['watch']}' data-idx=\"{$i}\" data-watch=\"{$row['watch']}\" data-title=\"{$title}\">";
                 echo "<input class=checkbox name='playlist' value='{$row['id']}' data-watch=\"{$row['watch']}\" type=checkbox>&nbsp;&nbsp;";
                 echo "<a href='#{$row['watch']}' onclick='play_track_no(\"{$row['watch']}\")'>{$row['title']}</a>";
-                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}";
+                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}</span>";
                 if(loggedin()){
                     echo " | {$row['plays']} | {$row['erroneous']} | <a href='?delete={$row['id']}'>delete</a>";
                 }
@@ -557,9 +556,8 @@
         }
         print '</div>';
         ?>
-
     </div>
-    <div id='sidebar'>
+    <div class="span5" id='sidebar'>
         <script type="text/javascript"> 
             var params = { allowScriptAccess: "always", bgcolor: "#cccccc" };
             var atts = { id: "myytplayer" };
@@ -568,8 +566,11 @@
         </script> 
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
         <div id='slider'></div>
-        <label for=shuffle>Shuffle</label> <input type=checkbox id=shuffle>
 
+        <div class="sideblock">
+            <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
+        </div>
+        
         <div class="sideblock">
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
