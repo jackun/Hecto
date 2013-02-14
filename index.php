@@ -1,10 +1,10 @@
-<?php 
-    include "functions.php"; 
+<?php
+    include "functions.php";
     $time_start = microtime_float();
 ?>
 <!DOCTYPE html public '❄'>
-<html> 
-  <head> 
+<html>
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="icon.ico" rel="icon" type="image/x-icon" />
     <title>Hecto</title>
@@ -16,11 +16,21 @@
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script> 
+    <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("swfobject", "2.1");
+        (function() {
+            var s = document.createElement('script');
+            var t = document.getElementsByTagName('script')[0];
+
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = '//api.flattr.com/js/0.6/load.js?mode=auto&uid=tanel&title=Hecto&description=Hecto&category=audio&button=compact';
+
+            t.parentNode.insertBefore(s, t);
+         })();
         var ytplayer = null,
             idx = 0,
             format = '<?php echo getformat();?>',
@@ -404,7 +414,7 @@
             }
         }
 
-        function ask_credit_card() {
+        function ytlocal() {
             location.href = '/ytlocal/' + location.hash;
             return false;
         }
@@ -528,12 +538,6 @@
 </div>
 
 <div class="container-fluid">
-    <div style="color:red; text-align:center; margin:10px 0px">
-        Congrats!
-        You won:£720,000
-        For claims Email your
-        full name and... just kidding - click <a href='javascript:ask_credit_card();'>here</a> to also search
-    </div>
   <div class="row-fluid">
     <div class="span8" id='songs'>
         <?php if(count($rows_php)>0){
@@ -566,23 +570,23 @@
         ?>
     </div>
     <div class="span4" id='sidebar'>
-        <script type="text/javascript"> 
+        <script type="text/javascript">
             var params = {
               allowScriptAccess: "always",
               bgcolor: "#cccccc",
               wmode: "opaque"
             };
             var atts = { id: "myytplayer" };
-            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
+            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer",
                          "ytapiplayer", "290", "217", "8", null, null, params, atts);
-        </script> 
+        </script>
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
         <div id='slider'></div>
 
         <div class="sideblock">
             <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
         </div>
-        
+
         <div class="sideblock">
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
@@ -597,6 +601,19 @@
 
         <div class="sideblock">
             git clone <a href="https://github.com/tanelpuhu/hecto">git://github.com/tanelpuhu/hecto.git</a>
+        </div>
+
+        <div class="sideblock">
+            Slightly different interface, with online searching <a href='javascript:ytlocal();'>here</a>
+        </div>
+
+        <div class="sideblock">
+            <a class="FlattrButton" style="display:none;"
+                title="Hecto"
+                href="">
+                Little music player. Plays videos from Youtube
+                that have been submitted to site.
+            </a>
         </div>
 
         <div class='sideblock'>
