@@ -18,12 +18,10 @@ if(isset($_GET['rows'])) {
 }
 
 $return = array();
-$where = '';
 $bkey = '';
 if(isset($_GET['bkey'])) {
   $bkey = $_GET['bkey'];
   $return['bkey'] = $bkey;
-  $where = " where bkey = :bkey";
 }
 
 $prep = $con->execute("
@@ -36,18 +34,11 @@ $prep = $con->execute("
            bkey,
            time
       FROM videos
-      {$where}
+      where bkey = ? or ? = ''
       order by id desc
-      limit :start,:rows
-");
+      limit ?,?
+", $bkey, $bkey, $start, $rows);
 
-$prep->setFetchMode(PDO::FETCH_ASSOC);
-$prep->bindValue(":start", $start, PDO::PARAM_INT);
-$prep->bindValue(":rows", $rows, PDO::PARAM_INT);
-if($bkey) {
-    $prep->bindValue(":bkey", $bkey, PDO::PARAM_STR);
-}
-$prep->execute();
 foreach ($prep as $rida) {
     $return['song'][] = $rida;
 }
