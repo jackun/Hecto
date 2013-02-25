@@ -37,7 +37,6 @@ if(isset($_GET['order']) and in_array($_GET['order'],$orders)) {
 $q.=" order by v.{$order} {$sort} limit {$start},".(LEHEL+1);
 
 $ret = $con->execute($q);
-$rows_count = mysql_num_rows($ret);
 $rows_php = array();
 $hetkel = 0;
 $rm_login_data = loggedin();
@@ -57,7 +56,7 @@ foreach ($ret as $row) {
 }
 $next_link = false;
 $prev_link = false;
-if($rows_count > LEHEL) {
+if($ret->rowcount() > LEHEL) {
     $next_link = true;
     array_pop($rows_php);
 }
