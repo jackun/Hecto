@@ -540,26 +540,27 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span8" id='songs'>
-        <?php if(count($rows_php)>0){
+        <?php
+        if(count($rows_php) > 0){
             $i = $start;
             foreach($rows_php as $row) {
                 $class = ' even';
                 if($i%2){
                     $class = ' odd';
                 }
-                $current_bkey = mysql_real_escape_string($row['bkey']);
-                $title = htmlspecialchars($row['title']);
-                echo "<div class='song{$class}' id='song-{$row['watch']}' data-idx=\"{$i}\" data-watch=\"{$row['watch']}\" data-title=\"{$title}\">";
-                echo "<input class=checkbox name='playlist' value='{$row['id']}' data-watch=\"{$row['watch']}\" type=checkbox>&nbsp;&nbsp;";
-                echo "<a href='#{$row['watch']}' onclick='play_track_no(\"{$row['watch']}\")'>{$row['title']}</a>";
-                echo " <span class='small'><a href='?bkey={$current_bkey}'>{$current_bkey}</a> {$row['time']}</span>";
+                $html_bkey = htmlspecialchars($row->bkey);
+                $url_bkey = urlencode($row->bkey);
+                $title = htmlspecialchars($row->title);
+                echo "<div class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch=\"{$row->watch}\" data-title=\"{$title}\">";
+                echo "<input class=checkbox name='playlist' value='{$row->id}' data-watch=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;";
+                echo "<a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>";
+                echo " <span class='small'><a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}</span>";
                 if(loggedin()){
-                    echo " | {$row['plays']} | {$row['erroneous']} | <a href='?delete={$row['id']}'>delete</a>";
+                    echo " | {$row->plays} | {$row->erroneous} | <a href='?delete={$row->id}'>delete</a>";
                 }
                 echo "</span></div>";
                 $i++;
             }
-            // if(!isset($_GET['p'])){ echo "<input type='button' value='Create playlist' onclick='create_playlist()'>";}
         }
         print '<div class=pagination>';
         if($next_link){
@@ -578,7 +579,7 @@
             };
             var atts = { id: "myytplayer" };
             swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer",
-                         "ytapiplayer", "290", "217", "8", null, null, params, atts);
+                         "ytapiplayer", "390", "300", "8", null, null, params, atts);
         </script>
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
         <div id='slider'></div>

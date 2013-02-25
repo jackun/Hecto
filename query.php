@@ -36,21 +36,22 @@ if(isset($_GET['order']) and in_array($_GET['order'],$orders)) {
 
 $q.=" order by v.{$order} {$sort} limit {$start},".(LEHEL+1);
 
-$ret = $c->q($q);
+$ret = $con->execute($q);
 $rows_count = mysql_num_rows($ret);
 $rows_php = array();
 $hetkel = 0;
 $rm_login_data = loggedin();
 $watch = isset($_GET['watch'])?$_GET['watch']:'';
-while($row=mysql_fetch_assoc($ret)){
-    if($watch == $row['watch'])
+foreach ($ret as $row) {
+    if($watch == $row->watch) {
         $hetkel = count($rows_php);
-    $row['id'] = (int)$row['id'];
+    }
+    // $row->id = (int)$row['id'];
     if($rm_login_data){
 
     }else{
-        unset($row['plays']);
-        unset($row['erroneous']);
+        unset($row->plays);
+        unset($row->erroneous);
     }
     $rows_php[] = $row;
 }

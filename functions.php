@@ -4,8 +4,8 @@ if(!file_exists("config.php")) {
 }
 
 include "config.php";
+include "mysql.php";
 include "func.cache.php";
-include "func.mysql.php";
 
 function microtime_float() {
    list($usec, $sec) = explode(" ", microtime());
@@ -16,12 +16,7 @@ function microtime_float() {
 if(preg_match('/MSIE/i',$_SERVER['HTTP_USER_AGENT'])) {
     header("Location: http://www.google.com/chrome");
     die();
-} 
-
-$c = new MySqlC(DB_SERVER, DB_USERNAME, DB_PASSWORD);
-$c->select(DB_NAME);
-
-$api_url = "http://gdata.youtube.com/feeds/api/videos/";
+}
 
 function return_to_referer() {
     $path = './';
@@ -63,33 +58,32 @@ function getformat() {
 }
 
 function set_bkey($value){
-    $bkey = mysql_real_escape_string(substr($value, 0, 32));
+    $bkey = substr($value, 0, 32);
     setcookie("h2bkey", $bkey, time()+60*60*24*365*5);
 }
 
-function get_bkey(){
+function get_bkey($con) {
     if(isset($_GET['pluginkey'])){
-        $bkey = mysql_real_escape_string($_GET['pluginkey']);
+        $bkey = $_GET['pluginkey'];
         if(trim($bkey) == ""){
-            $bkey = get_new_uniq_row('videos', 'bkey');
+            $bkey = get_new_uniq_row($con, 'videos', 'bkey');
         }
     } elseif(isset($_COOKIE['h2bkey'])) {
         $bkey = $_COOKIE['h2bkey'];
     } else {
-        $bkey = get_new_uniq_row('videos', 'bkey');
+        $bkey = get_new_uniq_row($con, 'videos', 'bkey');
     }
     set_bkey($bkey);
     return $bkey;
 }
 
-function bookmark($msg, $watch = '') {
-    // $msg = get_bkey() . ':' . $msg;
+function bookmark($con, $msg, $watch = '') {
     if(isset($_GET['plugin'])){
         $msg = str_replace(" ", "&nbsp;", $msg);
         die(json_encode(array(
             'msg' => $msg,
             'watch' => $watch,
-            'bkey' => get_bkey())
+            'bkey' => get_bkey($con))
         ));
     }
     $time = time();
@@ -132,67 +126,66 @@ END;
    die("$javascript($call)");
 }
 
-function add($video) {
-    global $api_url, $c, $YTKey;
-    $watch = "";
+function add($con, $video) {
     $url = parse_url($video);
     $url['host'] = ltrim($url['host'], "w.");
     if(strtolower($url['host']) != "youtube.com") {
-        bookmark('Wrong page, are you on youtube.');
+        bookmark($con, 'Wrong page, are you on youtube.');
     }
-    $query = array_key_exists('fragment', $url)?$url['fragment']:$url['query'];
     $query = $url['query'];
     $v = "";
     parse_str($query);
     $watch = $v;
     if(preg_match('/[^a-z0-9_-]+/i', $watch)) {
-        bookmark('Illegal stuff in video id.');
+        bookmark($con, 'Illegal stuff in video id.');
     }
 
     if($watch) {
-        $q = "SELECT count(watch) FROM videos WHERE watch = '".(mysql_real_escape_string($watch))."'";
-        $ret = mysql_fetch_array($c->q($q));
-        if($ret[0] != 0){
-            if(!isset($_GET['bookmark'])){
-                header('Location: ./?response=exists&watch='.$watch);
-            }else bookmark('Already exists!',$watch);
-            die();
-        }else{
-            $xml = cache($api_url.$watch.$YTKey,120);
+        $ret = $con->execute("SELECT 1 FROM videos WHERE watch = ?", $watch);
+        if($ret->rowcount() > 0) {
+            if(!isset($_GET['bookmark'])) {
+                header("Location: ./?response=exists&watch={$watch}");
+            } else {
+                bookmark($con, 'Already exists!', $watch);
+            }
+        } else {
+            $xml = cache("http://gdata.youtube.com/feeds/api/videos/{$watch}", 120);
             $xml_array = simplexml_load_string($xml);
-            $title = addslashes(end($xml_array->title));
-            $user = addslashes($xml_array->author->name);
-            if($title != ""){
-                $bkey = get_bkey();
-                $q = "INSERT INTO videos (id, title, user, watch, time, bkey) VALUES (NULL,'{$title}','{$user}','{$watch}',CURRENT_TIMESTAMP, '{$bkey}')";
-                $c->q($q);
+            $title = end($xml_array->title);
+            $user = $xml_array->author->name;
+            if($title != "") {
+                $bkey = get_bkey($con);
+                $con->execute("INSERT INTO videos (id, title, user, watch, time, bkey) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, ?)", $title, $user, $watch, $bkey);
                 yImage($watch);
-                if(!isset($_GET['bookmark'])){
+                if(!isset($_GET['bookmark'])) {
                     header('Location: ./?response=added&watch='.$watch);
-                }else bookmark('Added!',$watch);
-            }else{
-                if(!isset($_GET['bookmark'])){
-                    header('Location: ./?response=empty_title');
-                }else bookmark('No Title???');
+                } else {
+                    bookmark($con, 'Added!',$watch);
                 }
-            die();
+            } else {
+                if(!isset($_GET['bookmark'])) {
+                    header('Location: ./?response=empty_title');
+                } else {
+                    bookmark($con, 'No Title???');
+                }
+            }
         }
     } else {
         if(!isset($_GET['bookmark'])){
             header('Location: ./?response=wrong_format');
-        } else bookmark('Wrong page, are you on youtube?');
+        } else {
+            bookmark($con, 'Wrong page, are you on youtube?');
+        }
     }
+    die();
 }
 
-function get_new_uniq_row($table, $column, $min = 5, $max = 32){
-    global $c;
+function get_new_uniq_row($con, $table, $column, $min = 5, $max = 32){
     $id = md5(time().microtime().$_SERVER['HTTP_USER_AGENT']);
-    while($min<=$max){
-        $k2 = substr($id,0,$min);
-        $q = "SELECT count({$column}) FROM {$table} where {$column} = '$k2';";
-        $res = $c->q($q);
-        $fetch = mysql_fetch_array($res);
-        if($fetch[0] == 0){
+    while($min <= $max) {
+        $k2 = substr($id, 0, $min);
+        $res = $con->execute("SELECT 1 FROM {$table} where {$column} = ?", $k2);
+        if($res->rowcount() == 0) {
             $id = $k2;
             break;
         }
@@ -204,11 +197,10 @@ function get_new_uniq_row($table, $column, $min = 5, $max = 32){
 function orderby($mis) {
     $tmp = $_GET;
     $tmp['order'] = $mis;
-    $sort = 'asc';
     if(!isset($_GET['sort'])){
-        $_GET['sort'] = $sort;
+        $tmp['sort'] = 'asc';
     }
-    $tmp['sort'] = $sort == 'asc'?'desc':'asc';
+    $tmp['sort'] = $tmp['sort'] == 'asc'?'desc':'asc';
     return "?". http_build_query($tmp, '', '&');
 }
 
@@ -240,40 +232,24 @@ if(isset($_GET['logout'])) {
 if(isset($_GET['delete'])) {
     if(!loggedin()) die("Not allowed!");
     $delete = (int)$_GET['delete'];
-    $c->q("delete from videos where id = {$delete} limit 1;");
-    $c->q("delete from videos_playlist where video_id = {$delete};");
+    $con->execute("delete from videos where id = ? limit 1", $delete);
+    $con->execute("delete from videos_playlist where video_id = ?", $delete);
     return_to_referer();
 }
 
 if(isset($_GET['delete_playlist'])) {
     if(!loggedin()) die("Not allowed!");
     $delete_playlist = (int)$_GET['delete_playlist'];
-    $c->q("delete from videos_playlist where playlist = {$delete_playlist};");
+    $con->execute("delete from videos_playlist where playlist = ?", $delete_playlist);
     return_to_referer();
 }
 
-if(isset($_GET['create_playlist'])) {
-    $id = get_new_uniq_row('videos_playlist','playlist');
-    $create_playlist = explode(',',$_GET['create_playlist']);
-    $in = array();
-    foreach((array)$create_playlist as $playlist) {
-        $playlist = (int)$playlist;
-        if($playlist){
-            $in[] = "('{$id}',{$playlist})";
-        }
-    }
-    if(count($in)) {
-        $c->q("insert into videos_playlist (playlist, video_id) values ".implode(',', $in));
-    }
-    header("Location: ?p={$id}");
-}
-
 if(isset($_GET['add_one_play'])) {
-    $c->q("update videos set plays=plays+1 where watch='".mysql_real_escape_string($_GET['add_one_play'])."' limit 1;");
+    $con->execute("update videos set plays=plays+1 where watch=? limit 1", $_GET['add_one_play']);
     die();
 }
 if(isset($_GET['erroneous'])) {
-    $c->q("update videos set erroneous=erroneous+1 where watch='".mysql_real_escape_string($_GET['erroneous'])."' limit 1;");
+    $con->execute("update videos set erroneous=erroneous+1 where watch=? limit 1;", $_GET['erroneous']);
     die();
 }
 if(isset($_GET['toggleLayout'])) {
@@ -307,13 +283,13 @@ if(isset($_GET['set_key'])) {
     return_to_referer();
 }
 
-$bkey = get_bkey();
+$bkey = get_bkey($con);
 #Bookmark / Plugin
 if(isset($_GET['bookmark'])) {
     if(isset($_GET['pluginkey'])) {
         set_bkey($_GET['pluginkey']);
     }
-    add($_GET['bookmark']);
+    add($con, $_GET['bookmark']);
     die();
 }
 
