@@ -86,6 +86,9 @@ a:hover {
 .current_move {
   background-color: #EAD2CC;
   border-left:5px solid #D45E5E !important;
+  font-weight: bold;
+  line-height: 150%;
+  font-size: 1.2em;
 }
 
 .pagination {

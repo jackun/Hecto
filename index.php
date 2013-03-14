@@ -10,6 +10,7 @@
     <title>Hecto</title>
     <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc">
     <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <link type="text/css" rel="stylesheet" href="style.css">
     <script type="text/javascript" src="js/jquery.js"></script>
@@ -414,6 +415,12 @@
             }
         }
 
+        function plugin() {
+            if(chrome) {
+                chrome.webstore.install();
+            }
+        }
+
         function ytlocal() {
             location.href = '/ytlocal/' + location.hash;
             return false;
@@ -595,9 +602,7 @@
             ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
 
             <br />
-                or use this <a href="//<?php
-                echo $_SERVER['HTTP_HOST'] . $dir . '/hecto.crx';
-            ?>">Google Chrome extension</a>
+                or use this <a href="javascript:plugin();">Google Chrome extension</a>
         </div>
 
         <div class="sideblock">
