@@ -3,42 +3,13 @@ body {
   font-family: 'Lato', serif;
 }
 
-.front {
-    font-weight:bold;
-}
+
 a {
     color:#CA5300;
-    font-size:0.9em;
 }
+
 a:hover {
   color:#FF852E;
-}
-
-
-#songs {
-  float:left;
-  margin-bottom:100px;
-}
-
-#sidebar {
-  text-align: center;
-}
-
-.tag {
-  margin:5px;
-}
-
-.tag a {
-  text-decoration:none;
-  color:#555;
-}
-
-.tag a:hover {
-  color:#999;
-}
-
-.clear {
-  clear: both;
 }
 
 .odd {
@@ -49,13 +20,6 @@ a:hover {
   background-color: #FBFBFB;
 }
 
-.unread {
-  border-left: 5px solid #ccc !important;
-}
-
-.starred {
-  border-left:5px solid yellow !important;
-}
 
 .song {
   padding:5px;
@@ -86,9 +50,6 @@ a:hover {
 .current_move {
   background-color: #EAD2CC;
   border-left:5px solid #D45E5E !important;
-  font-weight: bold;
-  line-height: 150%;
-  font-size: 1.2em;
 }
 
 .pagination {
@@ -125,28 +86,44 @@ a:hover {
   padding: 10px;
 }
 
-.label {
-  padding: 1px 3px 2px;
-  font-size: 9.75px;
-  font-weight: bold;
-  color: #ffffff;
-  text-transform: uppercase;
-  white-space: nowrap;
-  background-color: #bfbfbf;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  text-shadow: none;
+
+#progress {
+  height: 45px;
+  width:800px;
+  z-index: 1;
+  position: relative;
 }
-.label.important {
-  background-color: #c43c35;
+
+.progress-outer {
+  height: 45px;
 }
-.label.warning {
-  background-color: #f89406;
+
+.progress-inner {
+  position:absolute;
+  z-index: 2;
+  position: absolute;
+  top: 3px;
+  z-index: 2;
+  text-align: right;
+  width: 100%;
 }
-.label.success {
-  background-color: #46a546;
+
+#pro-playing {
+  background-color: rgb(100, 100, 100);
+  background-image: -moz-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179));
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(100, 100, 100)), to(rgb(179, 179, 179)));
+  background-image: -webkit-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179))
+  background-image: -o-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179));
+  background-image: linear-gradient(to bottom, rgb(100, 100, 100), rgb(179, 179, 179));
+  background-repeat: repeat-x;
 }
-.label.notice {
-  background-color: #62cffc;
+
+#pro-loaded {
+  background-color: rgb(238, 238, 238);
+  background-image: -moz-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224));
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(238, 238, 238)), to(rgb(224, 224, 224)));
+  background-image: -webkit-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224))
+  background-image: -o-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224));
+  background-image: linear-gradient(to bottom, rgb(238, 238, 238), rgb(224, 224, 224));
+  background-repeat: repeat-x;
 }
