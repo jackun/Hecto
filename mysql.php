@@ -7,6 +7,7 @@ class Database{
   public function __construct($server, $name, $username, $password) {
     try {
       $this->con = new PDO("mysql:host={$server};dbname={$name}", $username, $password);
+      $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (Exception $e) {
       die(json_encode(array('error'=>'db connect failed!')));
     }
@@ -23,6 +24,10 @@ class Database{
     }
     $prep->execute();
     return $prep;
+  }
+
+  public function prepare($sql) {
+    return $this->con->prepare($sql);
   }
 
   private function arg_type($value){

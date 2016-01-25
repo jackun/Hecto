@@ -10,17 +10,18 @@ $start = $page * LEHEL - LEHEL;
 
 $q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
 if(isset($_GET['p'])){
-    $q.=", videos_playlist as v2 where v2.playlist = '".mysql_escape_string($_GET['p'])."' and v.id = v2.video_id";
+    $q.=", videos_playlist as v2 where v2.playlist = :p and v.id = v2.video_id";
 }elseif(isset($_GET['bkey'])){
-    $q.=" where v.bkey = '".mysql_escape_string($_GET['bkey'])."'";
+    $q.=" where v.bkey = :bkey";
 }elseif(isset($_GET['user'])){
-    $q.=" where v.user = '".mysql_escape_string($_GET['user'])."'";
+    $q.=" where v.user = :user";
 }elseif(isset($_GET['q'])){
     $_GET['q'] = trim($_GET['q']);
-    $q.=" where MATCH(v.title) AGAINST  ('".mysql_escape_string($_GET['q'])."')";
+    $q.=" where MATCH(v.title) AGAINST  (:q)";
 }elseif(isset($_GET['watch'])){
-    $q.=" where v.watch = '".mysql_escape_string($_GET['watch'])."'";
+    $q.=" where v.watch = :watch";
 }
+
 $sorts  = array('asc','desc');
 $orders = array('id','title','plays','erroneous');
 
@@ -34,14 +35,35 @@ if(isset($_GET['order']) and in_array($_GET['order'],$orders)) {
     $order = $_GET['order'];
 }
 
-$q.=" order by v.{$order} {$sort} limit {$start},".(LEHEL+1);
+//PDO can't sort
+$q.=" order by v.$order $sort limit :start,:lehel";
 
-$ret = $con->execute($q);
+$sth = $con->prepare($q);
+//$sth->bindValue(':order', "v.$order");
+//$sth->bindValue(':sort', $sort);
+$sth->bindParam(':start', $start, PDO::PARAM_INT);
+$sth->bindValue(':lehel', (LEHEL+1), PDO::PARAM_INT);
+
+if(isset($_GET['p'])){
+    $sth->bindValue(':p', $_GET['p']);
+}elseif(isset($_GET['bkey'])){
+    $sth->bindValue(':bkey', $_GET['bkey']);
+}elseif(isset($_GET['user'])){
+    $sth->bindValue(':user', $_GET['user']);
+}elseif(isset($_GET['q'])){
+    $_GET['q'] = trim($_GET['q']);
+    $sth->bindValue(':q', $_GET['q']);
+}elseif(isset($_GET['watch'])){
+    $sth->bindValue(':watch', $_GET['watch']);
+}
+
+$sth->execute();
+
 $rows_php = array();
 $hetkel = 0;
 $rm_login_data = loggedin();
 $watch = isset($_GET['watch'])?$_GET['watch']:'';
-foreach ($ret as $row) {
+while($row = $sth->fetchObject()) {
     if($watch == $row->watch) {
         $hetkel = count($rows_php);
     }
@@ -56,7 +78,7 @@ foreach ($ret as $row) {
 }
 $next_link = false;
 $prev_link = false;
-if($ret->rowcount() > LEHEL) {
+if($sth->rowCount() > LEHEL) {
     $next_link = true;
     array_pop($rows_php);
 }
