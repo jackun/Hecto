@@ -44,7 +44,7 @@ function cache($url, $cache_aeg = 20, $ignore_error = 0, $cache_dir = "./cache/"
     else {
         $cont = mcurl($url, $username, $password);
         if (!$ignore_error && gettype($cont) == "integer"){ // HACK
-		bookmark('Youtube API: '.$error_code[$cont]);
+          die('Youtube API: ' . $error_code[$cont]);
         }
         $h = fopen($fail, "w+");
         fwrite($h, $cont);

@@ -9,11 +9,11 @@ if(isset($_GET['start'])) {
     $start = 0;
   }
 }
-$rows = 50000;
+$rows = 1000;
 if(isset($_GET['rows'])) {
   $rows = (int)$_GET['rows'];
-  if($rows > 100000) {
-    $rows = 100000;
+  if($rows > 1000) {
+    $rows = 1000;
   }
 }
 

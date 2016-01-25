@@ -8,17 +8,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="icon.ico" rel="icon" type="image/x-icon" />
     <title>Hecto</title>
-    <link type="text/css" href="css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
-    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc">
-    <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' />
+    <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' rel="stylesheet" >
+    <link href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc" rel="chrome-webstore-item" />
     <link type="text/css" rel="stylesheet" href="style.css">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
         google.load("swfobject", "2.1");
@@ -36,8 +35,10 @@
             idx = 0,
             format = '<?php echo getformat();?>',
             current_check = '',
-            notseeking = true,
-            autoplay = <?php echo AUTOPLAY ?>;
+            autoplay = <?php echo AUTOPLAY ?>,
+            pro_playing,
+            pro_loaded,
+            api_videos = 'https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBXvgH3EooBGKkicX2724L9EoD1M6PVPqE&part=snippet';
 
         $.fn.get_random = function() {
             var len = this.length,
@@ -260,15 +261,27 @@
                 } else {
                     pros = pros2 = 0;
                 }
-                $("#slider").progressbar('value', pros);
-                if (notseeking) {
-                    $('#slider').slider('value', pros2);
+                var done = pros - pros2;
+                if(done < 0) {
+                    done = 0;
                 }
+                // return;
+                $(pro_playing).css('width', pros2 + '%');
+                $(pro_loaded).css('width', done + '%');
             }
             $('.song_time').html(buf);
             if (ytplayer.getPlayerState() === 0) {
                 play_next();
             }
+        }
+
+        function video_info(data) {
+            var item = data.items[0],
+                desc = item.snippet.description;
+            while(desc.indexOf('\n') !== -1) {
+                desc = desc.replace('\n', '<br>');
+            }
+            $('#song_descr').html(desc);
         }
 
         function load_new_video(watch, startSeconds) {
@@ -280,6 +293,8 @@
                 setTimeout(function() {
                     add_one_play(watch);
                 }, 10000);
+                $.getJSON(api_videos + '&id=' + watch, video_info);
+
                 set_current(watch);
             }
         }
@@ -436,25 +451,14 @@
                 });
             }
 
-            $("#slider").progressbar({
-                value: 0
-            });
-            $('#slider').slider({
-                value: 0,
-                max: 100,
-                animate: true
-            });
-            $('#slider').bind('slidestart', function(event, ui) {
-                notseeking = false;
-            });
-            $('#slider').bind('slidestop', function(event, ui) {
+            pro_playing = $('#pro-playing');
+            pro_loaded = $('#pro-loaded');
+
+            $('#progress').on('click', function(event, ui) {
                 var dur = get_song_duration();
                 if (dur && dur >= 0) {
-                    seek_to(($('#slider').slider('value') / 100) * dur);
+                    seek_to((event.pageX - $('#progress').offset().left)*100/$('#progress').width() / 100 * dur);
                 }
-                setTimeout(function() {
-                    notseeking = true;
-                }, 1000);
             });
             $('img').hover(function() {
                 $(this).fadeTo(300, 0.7);
@@ -490,7 +494,7 @@
                     } else if (e.which == 120 || e.which == 88) { //X
                         var current = get_current(1);
                         if (current.length) {
-                            current.children('.checkbox:first').prop('checked', function(e) {
+                            current.children('td:first').children('.checkbox:first').prop('checked', function(e) {
                                 this.checked = !this.checked;
                             });
                         }
@@ -499,54 +503,59 @@
                     }
                 }
             });
-            $('#songs').infinitescroll({
-                navSelector: "div.pagination",
-                nextSelector: "div.pagination a:first",
-                itemSelector: "#songs div.song",
-                pathParse: function() {
-                    return ['?page=', ''];
-                },
-                loading: {
-                    msgText: 'Loading MOAR...'
-                }
-            });
         });
     </script>
  </head>
 <body>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container-fluid topbar">
-        <a class="brand" href="./">Hecto</a>
-        <form class='navbar-form pull-right' method='GET'>
-          <input class="span7" name=q size=15 placeholder=Search type=search value="<?php
-              if(isset($_GET['q'])){
-                echo htmlspecialchars($_GET['q']);
-              }
-          ?>">
-        </form>
-        <?php
-          if(loggedin()){
-            print "<span class='navbar-text'><a href='?logout=1'>Logout</span>";
-          }
-        ?>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid topbar">
+          <a class="brand" href="./">Hecto</a>
+          <form class='navbar-form pull-right' method='GET'>
+            <input class="span7" name=q size=15 placeholder=Search type=search value="<?php
+                if(isset($_GET['q'])){
+                  echo htmlspecialchars($_GET['q']);
+                }
+            ?>">
+          </form>
+          <?php
+            if(loggedin()){
+              print "<span class='navbar-text'><a href='?logout=1'>Logout</span>";
+            }
+          ?>
+        </div>
       </div>
     </div>
-  </div>
-  <div class='bottom-bar'>
-    <a href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png' border=0></a>
-    <a href="javascript:void(0);" onclick="play_pause();"><img src='images/pause.png' id=play border=0></a>
-    <a href="javascript:void(0);" onclick="volume_mute();"><img src='images/unmute.png' id=mute border=0></a>
-    <a href="javascript:void(0);" onclick="volume_up();"><img src='images/vol_up.png' border=0></a>
-    <a href="javascript:void(0);" onclick="volume_down();"><img src='images/vol_down.png' border=0></a>
-    <a href="javascript:void(0);" onclick="play_next();"><img src='images/next.png' border=0></a>
-    <div class='song_time'>&nbsp;</div>
-    <div class='song_title'>&nbsp;</div>
-</div>
+
+    <div class="navbar navbar-fixed-bottom">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class=btn href="javascript:void(0);" onclick="volume_down();"><img src='images/vol_down.png?v=2' border=0></a>
+          <a class=btn href="javascript:void(0);" onclick="volume_up();"><img src='images/vol_up.png?v=2' border=0></a>
+          <a class=btn href="javascript:void(0);" onclick="play_prev();"><img src='images/prev.png?v=2' border=0></a>
+          <a class=btn href="javascript:void(0);" onclick="play_pause();"><img src='images/pause.png?v=2' id=play border=0></a>
+          <a class=btn href="javascript:void(0);" onclick="play_next();"><img src='images/next.png?v=2' border=0></a>
+          <div class='pull-right progress-outer'>
+
+            <div class="progress" id="progress">
+                <div class="bar" id="pro-playing" style="width: 0%;"></div>
+                <div class="bar" id="pro-loaded" style="width: 0%;"></div>
+                <div class="progress-inner">
+                    <div class='song_time'>&nbsp;</div>
+                    <div class='song_title'>&nbsp;</div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span8" id='songs'>
+
+        <table class="table table-condensed table-hover">
         <?php
         if(count($rows_php) > 0){
             $i = $start;
@@ -558,10 +567,15 @@
                 $html_bkey = htmlspecialchars($row->bkey);
                 $url_bkey = urlencode($row->bkey);
                 $title = htmlspecialchars($row->title);
-                echo "<div class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch=\"{$row->watch}\" data-title=\"{$title}\">";
-                echo "<input class=checkbox name='playlist' value='{$row->id}' data-watch=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;";
-                echo "<a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>";
-                echo " <span class='small'><a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}</span>";
+                echo "
+                    <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch=\"{$row->watch}\" data-title=\"{$title}\">
+                        <td><input class=checkbox name='playlist' value='{$row->id}' data-watch=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;
+                        <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>
+                        <td class='text-right'>
+                            <span class='small'>
+                                <a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}
+                            </span>
+                ";
                 if(loggedin()){
                     echo " | {$row->plays} | {$row->erroneous} | <a href='?delete={$row->id}'>delete</a>";
                 }
@@ -569,7 +583,7 @@
                 $i++;
             }
         }
-        print '<div class=pagination>';
+        print '</table><div class=pagination>';
         if($next_link){
             $_GET['page'] = $page + 1;
             echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";
@@ -589,13 +603,14 @@
                          "ytapiplayer", "390", "300", "8", null, null, params, atts);
         </script>
         <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
-        <div id='slider'></div>
 
         <div class="sideblock">
+            <div id="song_descr"></div>
+            <hr>
+
             <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
-        </div>
+            <hr>
 
-        <div class="sideblock">
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
             echo $_SERVER['HTTP_HOST'] . $dir;
@@ -603,26 +618,11 @@
 
             <br />
                 or use this <a href="javascript:plugin();">Google Chrome extension</a>
-        </div>
-
-        <div class="sideblock">
+            <hr>
             git clone <a href="https://github.com/tanelpuhu/hecto">git://github.com/tanelpuhu/hecto.git</a>
-        </div>
-
-        <div class="sideblock">
+            <hr>
             Slightly different interface, with online searching <a href='javascript:ytlocal();'>here</a>
-        </div>
-
-        <div class="sideblock">
-            <a class="FlattrButton" style="display:none;"
-                title="Hecto"
-                href="">
-                Little music player. Plays videos from Youtube
-                that have been submitted to site.
-            </a>
-        </div>
-
-        <div class='sideblock'>
+            <hr>
           <?php
             $time_end = round(microtime_float()-$time_start, 5);
             print sprintf("

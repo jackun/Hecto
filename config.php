@@ -42,9 +42,6 @@ $token_ids = array(
 $signatureKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 $apiID = 0000;
 
-# Youtube dev. key
+# Youtube API key
 # ~~~~~~~~~~~~~~~~
-# format : "?key=XXXXXXXXXXXXXXX"
-# you can get one from there : http://code.google.com/apis/youtube/dashboard/
-# leave blank if you dont want to use this
-$YTKey = "";
+$YTKey = "AIzaSyBXvgH3EooBGKkicX2724L9EoD1M6PVPqE";

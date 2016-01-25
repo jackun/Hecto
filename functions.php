@@ -127,6 +127,7 @@ END;
 }
 
 function add($con, $video) {
+    global $YTKey;
     $url = parse_url($video);
     $url['host'] = ltrim($url['host'], "w.");
     if(strtolower($url['host']) != "youtube.com") {
@@ -149,10 +150,10 @@ function add($con, $video) {
                 bookmark($con, 'Already exists!', $watch);
             }
         } else {
-            $xml = cache("http://gdata.youtube.com/feeds/api/videos/{$watch}", 120);
-            $xml_array = simplexml_load_string($xml);
-            $title = end($xml_array->title);
-            $user = $xml_array->author->name;
+            $json = cache("https://www.googleapis.com/youtube/v3/videos?key={$YTKey}&part=snippet&id={$watch}", 120);
+            $data = json_decode($json);
+            $title = $data->items[0]->snippet->title;
+            $user = 'nobody';
             if($title != "") {
                 $bkey = get_bkey($con);
                 $con->execute("INSERT INTO videos (id, title, user, watch, time, bkey) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, ?)", $title, $user, $watch, $bkey);
