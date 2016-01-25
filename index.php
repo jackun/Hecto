@@ -20,7 +20,6 @@
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
-        google.load("swfobject", "2.1");
         (function() {
             var s = document.createElement('script');
             var t = document.getElementsByTagName('script')[0];
@@ -28,7 +27,13 @@
             s.type = 'text/javascript';
             s.async = true;
             s.src = '//api.flattr.com/js/0.6/load.js?mode=auto&uid=tanel&title=Hecto&description=Hecto&category=audio&button=compact';
+            t.parentNode.insertBefore(s, t);
 
+            s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = '//www.youtube.com/iframe_api';
+            
             t.parentNode.insertBefore(s, t);
          })();
         var ytplayer = null,
@@ -310,8 +315,22 @@
             return -1 * ($(window).height() / 3);
         }
 
-        function onYouTubePlayerReady(playerId) {
-            ytplayer = document.getElementById('myytplayer');
+        function onYouTubeIframeAPIReady() {
+            ytplayer = new YT.Player('ytapiplayer', {
+                height: '217',
+                width: '290',
+                playerVars: {
+                    'controls': 1,
+                },
+                //videoId: 'M7lc1UVf-VE',
+                events: {
+                    'onReady': onPlayerReady,
+                    //'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady() {
             setInterval(update_payer_info, 500);
             // ytplayer.addEventListener("onStateChange", "on_player_state_change");
             ytplayer.addEventListener('onError', 'on_player_error');
@@ -592,17 +611,8 @@
         ?>
     </div>
     <div class="span4" id='sidebar'>
-        <script type="text/javascript">
-            var params = {
-              allowScriptAccess: "always",
-              bgcolor: "#cccccc",
-              wmode: "opaque"
-            };
-            var atts = { id: "myytplayer" };
-            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer",
-                         "ytapiplayer", "390", "300", "8", null, null, params, atts);
-        </script>
-        <div id="ytapiplayer">You need Flash player 8+ and JavaScript enabled to view this video.</div>
+        <div id="ytapiplayer"></div>
+        <div id='slider'></div>
 
         <div class="sideblock">
             <div id="song_descr"></div>
