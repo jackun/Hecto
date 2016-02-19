@@ -127,3 +127,10 @@ a:hover {
   background-image: linear-gradient(to bottom, rgb(238, 238, 238), rgb(224, 224, 224));
   background-repeat: repeat-x;
 }
+
+#sidebar {
+  height: 90vh;
+  position: fixed;
+  overflow: auto;
+  right: 0px;
+}
