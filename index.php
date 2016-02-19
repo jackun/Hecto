@@ -499,6 +499,7 @@
 
 <?php if(!isset($_GET["noinfi"])): ?>
             $('#songs table tbody').infinitescroll({
+                state: { currPage: <?php echo isset($_GET["page"]) ? intval($_GET["page"]) : "1"; ?> },
                 debug: false,
                 navSelector  : "tr.pagination",
                 nextSelector : "tr.pagination a:first",
