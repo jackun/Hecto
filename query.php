@@ -8,7 +8,7 @@ if(isset($_GET['page'])) {
 }
 $start = $page * LEHEL - LEHEL;
 
-$q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
+$q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m/%y') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
 if(isset($_GET['p'])){
     $q.=", videos_playlist as v2 where v2.playlist = :p and v.id = v2.video_id";
 }elseif(isset($_GET['bkey'])){

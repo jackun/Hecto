@@ -1,4 +1,6 @@
 <?php
+//parse_str($_SERVER['QUERY_STRING'], $_GET);
+//error_reporting(E_ALL);
     include "functions.php";
     $time_start = microtime_float();
 ?>
@@ -18,6 +20,7 @@
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
         (function() {
@@ -40,7 +43,7 @@
             idx = 0,
             format = '<?php echo getformat();?>',
             current_check = '',
-            autoplay = <?php echo AUTOPLAY ?>,
+            autoplay = parseInt(cookie("autoplay")) === 1 <?php //echo " || AUTOPLAY" ?>,
             pro_playing,
             pro_loaded,
             api_videos = 'https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBXvgH3EooBGKkicX2724L9EoD1M6PVPqE&part=snippet';
@@ -271,6 +274,7 @@
                     done = 0;
                 }
                 // return;
+                // eats cpu
                 $(pro_playing).css('width', pros2 + '%');
                 $(pro_loaded).css('width', done + '%');
             }
@@ -476,7 +480,7 @@
             $('#progress').on('click', function(event, ui) {
                 var dur = get_song_duration();
                 if (dur && dur >= 0) {
-                    seek_to((event.pageX - $('#progress').offset().left)*100/$('#progress').width() / 100 * dur);
+                    seek_to((event.pageX - $(this).offset().left)*100/$(this).width() / 100 * dur);
                 }
             });
             $('img').hover(function() {
@@ -491,6 +495,46 @@
 
             $shuffle.on('change', function() {
                 update_cookies('shuffle');
+            });
+
+<?php if(!isset($_GET["noinfi"])): ?>
+            $('#songs table').infinitescroll({
+                debug: false,
+                navSelector  : "tr.pagination",
+                nextSelector : "tr.pagination a:first",
+                itemSelector : "tr.song",
+                dataType: 'html',
+                pathParse    : function() {
+                    // Whatever....
+                    var extra = [];
+                    var href = window.location.href;
+                    var m = href.match(/bkey=(.*?)(&|$)/);
+                    if(m) extra.push('bkey=' + m[1]);
+                    return ['?' + extra.join('&') + (extra.length ? '&' : '') + 'page=', ''];
+                },
+                loading : {
+                    msgText      : 'Loading MOAR...',
+                }
+            });
+<?php endif; ?>
+
+            $('#powersave').click(function(e) {
+                if(this.checked) {
+                    $('#ytapiplayer').css('height', '0px')
+                        .css('margin-bottom', '217px');
+                    $(pro_playing).css('height', '0px');
+                    $(pro_loaded).css('height', '0px');
+                } else {
+                    $('#ytapiplayer').css('height', '')
+                        .css('margin-bottom', '');
+                    $(pro_playing).css('height', '');
+                    $(pro_loaded).css('height', '');
+                }
+            });
+
+            $('#autoplay').checked = autoplay;
+            $('#autoplay').click(function(e) {
+                cookie("autoplay", (autoplay = this.checked) ? 1 : 0);
             });
 
             var bw = cookie('BW');
@@ -602,12 +646,14 @@
                 $i++;
             }
         }
-        print '</table><div class=pagination>';
+        print '<tr class=pagination><td colspan=3>';
         if($next_link){
             $_GET['page'] = $page + 1;
             echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";
         }
-        print '</div>';
+        print '</td></tr>';
+
+        print '</table>';
         ?>
     </div>
     <div class="span4" id='sidebar'>
@@ -618,7 +664,9 @@
             <div id="song_descr"></div>
             <hr>
 
+            <label for=autoplay>Autoplay <input type=checkbox id=autoplay></label>
             <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
+            <label for=powersave>Powersave <input type=checkbox id=powersave></label>
             <hr>
 
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
@@ -631,7 +679,7 @@
             <hr>
             git clone <a href="https://github.com/tanelpuhu/hecto">git://github.com/tanelpuhu/hecto.git</a>
             <hr>
-            Slightly different interface, with online searching <a href='javascript:ytlocal();'>here</a>
+            <!-- Slightly different interface, with online searching <a href='javascript:ytlocal();'>here</a> -->
             <hr>
           <?php
             $time_end = round(microtime_float()-$time_start, 5);
@@ -646,7 +694,7 @@
 
 
 
-  <script type="text/javascript">
+  <!--script type="text/javascript">
       var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");
       document.write(unescape("%3Cscript src='//" + gaJsHost + ".google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
   </script>
@@ -656,6 +704,6 @@
           pageTracker._initData();
           pageTracker._trackPageview();
       } catch(err) {}
-  </script>
+  </script-->
   </body>
 </html>
