@@ -498,7 +498,7 @@
             });
 
 <?php if(!isset($_GET["noinfi"])): ?>
-            $('#songs table').infinitescroll({
+            $('#songs table tbody').infinitescroll({
                 debug: false,
                 navSelector  : "tr.pagination",
                 nextSelector : "tr.pagination a:first",
@@ -619,6 +619,7 @@
     <div class="span8" id='songs'>
 
         <table class="table table-condensed table-hover">
+        <tbody>
         <?php
         if(count($rows_php) > 0){
             $i = $start;
@@ -652,9 +653,9 @@
             echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";
         }
         print '</td></tr>';
-
-        print '</table>';
         ?>
+        </tbody>
+        </table>
     </div>
     <div class="span4" id='sidebar'>
         <div id="ytapiplayer"></div>
