@@ -209,7 +209,7 @@
         function get_current_watch() {
             var current = get_current();
             if (current.length) {
-                return current.data('watch');
+                return current.data('watch-id');
             }
         }
 
@@ -364,7 +364,7 @@
             }
 
             if (next.length) {
-                var watch = next.data('watch');
+                var watch = next.data('watch-id');
                 if (watch === current) {
                     seek_to(0);
                 } else {
@@ -395,7 +395,8 @@
         function play_keyboard_track() {
             var current = get_current(1);
             if (current.length) {
-                play_track_no(current.data('watch'));
+                console.log(current, current.data('watch-id'));
+                play_track_no(current.data('watch-id'));
             }
         }
 
@@ -441,7 +442,7 @@
         function play_prev() {
             var prev = get_prev();
             if (prev.length) {
-                var id = prev.data('watch');
+                var id = prev.data('watch-id');
                 play_track_no(id);
             }
         }
@@ -475,7 +476,7 @@
             var l = location.hash;
             if (l.indexOf('#') === 0) {
                 $('.song').each(function(i, e) {
-                    if ($(e).data('watch') === l.substring(1)) {
+                    if ($(e).data('watch-id') === l.substring(1)) {
                         set_current(l.substring(1));
                     }
                 });
@@ -523,6 +524,9 @@
                 loading : {
                     msgText      : 'Loading MOAR...',
                 }
+            }, function (e) {
+                if (location.hash.length)
+                    set_current(location.hash.substring(1));
             });
 <?php endif; ?>
 
@@ -682,8 +686,8 @@
                 $url_bkey = urlencode($row->bkey);
                 $title = htmlspecialchars($row->title);
                 echo "
-                    <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch=\"{$row->watch}\" data-title=\"{$title}\">
-                        <td><input class=checkbox name='playlist' value='{$row->id}' data-watch=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;
+                    <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch-id=\"{$row->watch}\" data-title=\"{$title}\">
+                        <td><input class=checkbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;
                         <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>
                         <td class='text-right'>
                             <span class='small'>
