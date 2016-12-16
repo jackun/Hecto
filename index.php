@@ -96,7 +96,7 @@
             } else if (what === 'volume' && value) {
                 cookie('volume', value);
             } else if (what === 'BW' && value) {
-                var cbw = parseInt(cookie('BW'), 10) || 0;
+                var cbw = parseInt(cookie('BW') || "0", 10);
                 cookie('BW', cbw + value);
                 $('#bw').html(b2KMGb(cbw));
             }
@@ -148,15 +148,9 @@
             }
         }
 
-        function get_song_bytes_loaded() {
+        function get_song_loaded() {
             if (ytplayer) {
-                return ytplayer.getVideoBytesLoaded();
-            }
-        }
-
-        function get_song_bytes_total() {
-            if (ytplayer) {
-                return ytplayer.getVideoBytesTotal();
+                return ytplayer.getVideoLoadedFraction();
             }
         }
 
@@ -257,10 +251,10 @@
             }
         }
 
-        function update_payer_info() {
+        function update_player_info() {
             var pros, pros2, time_total, time_now, m, s, buf = '';
             if (ytplayer) {
-                pros = (get_song_bytes_loaded() / get_song_bytes_total()) * 100;
+                pros = get_song_loaded() * 100;
                 time_total = get_song_duration();
                 time_now = get_song_current_time();
                 if (time_total >= 0 && time_now >= 0) {
@@ -301,7 +295,6 @@
 
         function load_new_video(watch, startSeconds) {
             if (ytplayer) {
-                update_cookies('BW', get_song_bytes_loaded());
                 location.href = "#" + watch;
                 ytplayer.loadVideoById(watch, parseInt(startSeconds, 10), format);
                 current_check = watch;
@@ -311,9 +304,6 @@
                 $.getJSON(api_videos + '&id=' + watch, video_info);
 
                 set_current(watch);
-
-                var bw = cookie('BW');
-                $('#bw').html(b2KMGb(bw));
             }
         }
 
@@ -352,7 +342,7 @@
 
         function onPlayerReady(event) {
             event.target.setPlaybackQuality('medium');
-            setInterval(update_payer_info, 500);
+            setInterval(update_player_info, 500);
             // ytplayer.addEventListener("onStateChange", "on_player_state_change");
             ytplayer.addEventListener('onError', 'on_player_error');
             var volume = parseInt(cookie('volume'), 10);
@@ -582,9 +572,6 @@
                 this.form.submit();
             });
 
-            var bw = cookie('BW');
-            $('#bw').html(b2KMGb(bw));
-
             $(document).bind('keypress', function(e) {
                 var target = (e.target && e.target.type) || 'other';
                 if ('text,submit,search'.indexOf(target) === -1) {
@@ -749,7 +736,7 @@
           <?php
             $time_end = round(microtime_float()-$time_start, 5);
             print sprintf("
-                ~<span id=bw>#</span> | %s | <a href='javascript:void(0);' onClick='set_key();'>%s</a>
+                %s | <a href='javascript:void(0);' onClick='set_key();'>%s</a>
                 ", $time_end, $bkey
             );
           ?>
