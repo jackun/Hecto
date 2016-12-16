@@ -15,6 +15,11 @@
     <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' rel="stylesheet" >
     <link href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc" rel="chrome-webstore-item" />
     <link type="text/css" rel="stylesheet" href="style.css">
+    <style type="text/css">
+		.bigplayer_sidebar { width: 65% !important; }
+		.bigplayer_songs { width: 34% !important; font-size: smaller !important; }
+        .bigplayer_yt { width: 60vw; height:80vh; }
+    </style>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
@@ -44,6 +49,7 @@
             format = '<?php echo getformat();?>',
             current_check = '',
             autoplay = parseInt(cookie("autoplay")) === 1 <?php //echo " || AUTOPLAY" ?>,
+            switch_size = parseInt(cookie("switch-size")) === 1,
             pro_playing,
             pro_loaded,
             api_videos = 'https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBXvgH3EooBGKkicX2724L9EoD1M6PVPqE&part=snippet';
@@ -305,6 +311,9 @@
                 $.getJSON(api_videos + '&id=' + watch, video_info);
 
                 set_current(watch);
+
+                var bw = cookie('BW');
+                $('#bw').html(b2KMGb(bw));
             }
         }
 
@@ -321,8 +330,9 @@
 
         function onYouTubeIframeAPIReady() {
             ytplayer = new YT.Player('ytapiplayer', {
-                height: '217',
-                width: '290',
+                height: '300',
+                width: '400',
+                iv_load_policy: 3,
                 playerVars: {
                     'controls': 1,
                 },
@@ -334,7 +344,14 @@
             });
         }
 
-        function onPlayerReady() {
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.BUFFERING) {
+                event.target.setPlaybackQuality('medium');
+            }
+        }
+
+        function onPlayerReady(event) {
+            event.target.setPlaybackQuality('medium');
             setInterval(update_payer_info, 500);
             // ytplayer.addEventListener("onStateChange", "on_player_state_change");
             ytplayer.addEventListener('onError', 'on_player_error');
@@ -538,6 +555,33 @@
                 cookie("autoplay", (autoplay = this.checked) ? 1 : 0);
             });
 
+            function switch_size_fn(checked)
+            {
+                if (checked)
+                {
+                    $('div#sidebar').addClass('bigplayer_sidebar');
+                    $('div#songs').addClass('bigplayer_songs');
+                    $('#ytapiplayer').addClass('bigplayer_yt');
+                }
+                else
+                {
+                    $('div#sidebar').removeClass('bigplayer_sidebar');
+                    $('div#songs').removeClass('bigplayer_songs');
+                    $('#ytapiplayer').removeClass('bigplayer_yt');
+                }
+            }
+
+            $('#switch-size').checked = switch_size;
+            $('#switch-size').click(function(e) {
+                cookie("switch-size", (switch_size = this.checked) ? 1 : 0);
+                switch_size_fn(this.checked);
+            });
+            switch_size_fn(switch_size);
+
+            $('#page_select').change(function(e){
+                this.form.submit();
+            });
+
             var bw = cookie('BW');
             $('#bw').html(b2KMGb(bw));
 
@@ -575,6 +619,22 @@
       <div class="navbar-inner">
         <div class="container-fluid topbar">
           <a class="brand" href="./">Hecto</a>
+
+        <form id="jump_to_page" method="GET" class='navbar-form pull-right'>
+            <select id="page_select" name="page">
+            <?php
+                for($id=1; $id<=$page_count; $id++)
+                {
+                    echo "<option value=\"$id\"";
+                    if(isset($_GET["page"]) && $id==$_GET["page"])
+                        echo " selected=\"selected\" ";
+                    echo ">Page $id</option>\n";
+                }
+            ?>
+            <input type="submit" value="Go"/>
+            </select>
+        </form>
+
           <form class='navbar-form pull-right' method='GET'>
             <input class="span7" name=q size=15 placeholder=Search type=search value="<?php
                 if(isset($_GET['q'])){
@@ -618,7 +678,6 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span8" id='songs'>
-
         <table class="table table-condensed table-hover">
         <tbody>
         <?php
@@ -659,6 +718,7 @@
         </table>
     </div>
     <div class="span4" id='sidebar'>
+        <label for=switch-size>Switch size <input type=checkbox id=switch-size></label>
         <div id="ytapiplayer"></div>
         <div id='slider'></div>
 

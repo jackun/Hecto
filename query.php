@@ -8,19 +8,51 @@ if(isset($_GET['page'])) {
 }
 $start = $page * LEHEL - LEHEL;
 
-$q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m/%y') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
-if(isset($_GET['p'])){
-    $q.=", videos_playlist as v2 where v2.playlist = :p and v.id = v2.video_id";
-}elseif(isset($_GET['bkey'])){
-    $q.=" where v.bkey = :bkey";
-}elseif(isset($_GET['user'])){
-    $q.=" where v.user = :user";
-}elseif(isset($_GET['q'])){
-    $_GET['q'] = trim($_GET['q']);
-    $q.=" where MATCH(v.title) AGAINST  (:q)";
-}elseif(isset($_GET['watch'])){
-    $q.=" where v.watch = :watch";
+function add_query_params()
+{
+	$q = "";
+	if(isset($_GET['p'])){
+		$q.=", videos_playlist as v2 where v2.playlist = :p and v.id = v2.video_id";
+	}elseif(isset($_GET['bkey'])){
+		$q.=" where v.bkey = :bkey";
+	}elseif(isset($_GET['user'])){
+		$q.=" where v.user = :user";
+	}elseif(isset($_GET['q'])){
+		$_GET['q'] = trim($_GET['q']);
+		$q.=" where MATCH(v.title) AGAINST  (:q)";
+	}elseif(isset($_GET['watch'])){
+		$q.=" where v.watch = :watch";
+	}
+	return $q;
 }
+
+function bind_query_params($sth)
+{
+	if(isset($_GET['p'])){
+		$sth->bindValue(':p', $_GET['p']);
+	}elseif(isset($_GET['bkey'])){
+		$sth->bindValue(':bkey', $_GET['bkey']);
+	}elseif(isset($_GET['user'])){
+		$sth->bindValue(':user', $_GET['user']);
+	}elseif(isset($_GET['q'])){
+		$_GET['q'] = trim($_GET['q']);
+		$sth->bindValue(':q', $_GET['q']);
+	}elseif(isset($_GET['watch'])){
+		$sth->bindValue(':watch', $_GET['watch']);
+	}
+}
+
+$q_count = "SELECT count(v.id) FROM videos as v"; 
+$q_count .= add_query_params();
+$sth = $con->prepare($q_count);
+bind_query_params($sth);
+
+$sth->execute();
+$row = $sth->fetch();
+$page_count = (int)($row[0] / LEHEL) + 1;
+
+$q = "SELECT v.id, v.title, DATE_FORMAT(v.time, '%H:%i %d/%m/%y') as time, v.watch,v.plays,v.erroneous,v.bkey FROM videos as v"; 
+$q .= add_query_params();
 
 $sorts  = array('asc','desc');
 $orders = array('id','title','plays','erroneous');
@@ -44,18 +76,7 @@ $sth = $con->prepare($q);
 $sth->bindParam(':start', $start, PDO::PARAM_INT);
 $sth->bindValue(':lehel', (LEHEL+1), PDO::PARAM_INT);
 
-if(isset($_GET['p'])){
-    $sth->bindValue(':p', $_GET['p']);
-}elseif(isset($_GET['bkey'])){
-    $sth->bindValue(':bkey', $_GET['bkey']);
-}elseif(isset($_GET['user'])){
-    $sth->bindValue(':user', $_GET['user']);
-}elseif(isset($_GET['q'])){
-    $_GET['q'] = trim($_GET['q']);
-    $sth->bindValue(':q', $_GET['q']);
-}elseif(isset($_GET['watch'])){
-    $sth->bindValue(':watch', $_GET['watch']);
-}
+bind_query_params($sth);
 
 $sth->execute();
 
