@@ -322,9 +322,9 @@
             ytplayer = new YT.Player('ytapiplayer', {
                 height: '300',
                 width: '400',
-                iv_load_policy: 3,
                 playerVars: {
                     'controls': 1,
+                    'iv_load_policy': 3, //annotations off
                 },
                 //videoId: 'M7lc1UVf-VE',
                 events: {
