@@ -621,6 +621,9 @@
           <a class="brand" href="./">Hecto</a>
 
         <form id="jump_to_page" method="GET" class='navbar-form pull-right'>
+            <?php if(isset($_GET["bkey"])):?>
+            <input type="hidden" name="bkey" value="<?php echo htmlentities($_GET["bkey"]);?>"/>
+            <?php endif;?>
             <select id="page_select" name="page">
             <?php
                 for($id=1; $id<=$page_count; $id++)
