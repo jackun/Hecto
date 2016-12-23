@@ -152,18 +152,19 @@ a:hover {
 label {
  background: #F1F1F1;
  padding: 5px;
- padding-left: 20px;
+ padding-left: 24px;
  border: 1px solid #ddd;
+ position: relative;
 }
 
 .cbox {
  display: none;
 }
 
-label:before {
- position:relative;
- left: -16px;
- top: 2px;
+label:after {
+ position: absolute;
+ left: 2px;
+ top: 6px;
  width: 16px;
  height: 16px;
  z-index: 1;
@@ -172,7 +173,6 @@ label:before {
  background-image: url(images/checkbox_unchecked.png); /* Gentleface.com / http://findicons.com/icon/267703/checkbox_checked */
 }
 
-input[type=checkbox]:checked + label:before {
+input[type=checkbox]:checked + label:after {
  background-image: url(images/checkbox_checked.png); /* Gentleface.com / http://findicons.com/icon/267796/checkbox_unchecked */
 }
-
