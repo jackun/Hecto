@@ -14,12 +14,7 @@
     <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' />
     <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' rel="stylesheet" >
     <link href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc" rel="chrome-webstore-item" />
-    <link type="text/css" rel="stylesheet" href="style.css">
-    <style type="text/css">
-		.bigplayer_sidebar { width: 65% !important; }
-		.bigplayer_songs { width: 34% !important; font-size: smaller !important; }
-        .bigplayer_yt { width: 60vw; height:80vh; }
-    </style>
+    <link type="text/css" rel="stylesheet" href="style.css?201612231">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
@@ -718,7 +713,10 @@
         </table>
     </div>
     <div class="span4" id='sidebar'>
-        <label for=switch-size>Switch size <input type=checkbox id=switch-size></label>
+
+        <input class="cbox" type=checkbox id=switch-size>
+        <label for=switch-size>Switch size</label>
+
         <div id="ytapiplayer"></div>
         <div id='slider'></div>
 
@@ -726,10 +724,17 @@
             <div id="song_descr"></div>
             <hr>
 
-            <label for=dont_force_medium>Don't force medium quality <input type=checkbox id=dont-force-medium></label>
-            <label for=autoplay>Autoplay <input type=checkbox id=autoplay></label>
-            <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
-            <label for=powersave>Powersave <input type=checkbox id=powersave></label>
+            <input class="cbox" type=checkbox id=dont-force-medium>
+            <label for=dont-force-medium>Don't force medium quality</label>
+
+            <input class="cbox" type=checkbox id=autoplay>
+            <label for=autoplay>Autoplay</label>
+
+            <input class="cbox" type=checkbox id=shuffle>
+            <label for=shuffle>Shuffle</label>
+
+            <input class="cbox" type=checkbox id=powersave>
+            <label for=powersave>Powersave</label>
             <hr>
 
             Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php

@@ -134,3 +134,44 @@ a:hover {
   overflow: auto;
   right: 0px;
 }
+                
+.bigplayer_sidebar { 
+ width: 65% !important; 
+}
+
+.bigplayer_songs {
+ width: 34% !important;
+ font-size: smaller !important;
+}
+
+.bigplayer_yt {
+ width: 60vw;
+ height:80vh;
+}
+
+label {
+ background: #F1F1F1;
+ padding: 5px;
+ padding-left: 20px;
+}
+
+.cbox {
+ display: none;
+}
+
+label:before {
+ position:relative;
+ left: -16px;
+ top: 3px;
+ width: 16px;
+ height: 16px;
+ z-index: 1;
+ content: "";
+ display: inline-block;
+ background-image: url(images/checkbox_unchecked.png); /* Gentleface.com / http://findicons.com/icon/267703/checkbox_checked */
+}
+
+input[type=checkbox]:checked + label:before {
+ background-image: url(images/checkbox_checked.png); /* Gentleface.com / http://findicons.com/icon/267796/checkbox_unchecked */
+}
+
