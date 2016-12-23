@@ -153,6 +153,7 @@ label {
  background: #F1F1F1;
  padding: 5px;
  padding-left: 20px;
+ border: 1px solid #ddd;
 }
 
 .cbox {
@@ -162,7 +163,7 @@ label {
 label:before {
  position:relative;
  left: -16px;
- top: 3px;
+ top: 2px;
  width: 16px;
  height: 16px;
  z-index: 1;
