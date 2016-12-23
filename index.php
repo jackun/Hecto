@@ -48,7 +48,8 @@
             idx = 0,
             format = '<?php echo getformat();?>',
             current_check = '',
-            autoplay = parseInt(cookie("autoplay")) === 1 <?php //echo " || AUTOPLAY" ?>,
+            autoplay = parseInt(cookie("autoplay")) === 1,
+            dont_force_medium = parseInt(cookie("dont-force-medium")) === 1,
             switch_size = parseInt(cookie("switch-size")) === 1,
             pro_playing,
             pro_loaded,
@@ -329,13 +330,13 @@
                 //videoId: 'M7lc1UVf-VE',
                 events: {
                     'onReady': onPlayerReady,
-                    //'onStateChange': onPlayerStateChange
+                    'onStateChange': onPlayerStateChange
                 }
             });
         }
 
         function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.BUFFERING) {
+            if (!dont_force_medium && event.data == YT.PlayerState.BUFFERING) {
                 event.target.setPlaybackQuality('medium');
             }
         }
@@ -549,6 +550,11 @@
                 cookie("autoplay", (autoplay = this.checked) ? 1 : 0);
             });
 
+            $('#dont-force-medium').checked = dont_force_medium;
+            $('#dont-force-medium').click(function(e) {
+                cookie("dont-force-medium", (dont_force_medium = this.checked) ? 1 : 0);
+            });
+
             function switch_size_fn(checked)
             {
                 if (checked)
@@ -720,6 +726,7 @@
             <div id="song_descr"></div>
             <hr>
 
+            <label for=dont_force_medium>Don't force medium quality <input type=checkbox id=dont-force-medium></label>
             <label for=autoplay>Autoplay <input type=checkbox id=autoplay></label>
             <label for=shuffle>Shuffle <input type=checkbox id=shuffle></label>
             <label for=powersave>Powersave <input type=checkbox id=powersave></label>
