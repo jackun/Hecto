@@ -391,7 +391,6 @@
         function play_keyboard_track() {
             var current = get_current(1);
             if (current.length) {
-                console.log(current, current.data('watch-id'));
                 play_track_no(current.data('watch-id'));
             }
         }
