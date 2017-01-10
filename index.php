@@ -655,8 +655,8 @@
                     echo ">Page $id</option>\n";
                 }
             ?>
-            <input type="submit" value="Go"/>
             </select>
+            <input type="submit" value="Go">
         </form>
 
           <form class='navbar-form pull-right' method='GET'>
@@ -668,7 +668,7 @@
           </form>
           <?php
             if(loggedin()){
-              print "<span class='navbar-text'><a href='?logout=1'>Logout</span>";
+              print "<span class='navbar-text'><a href='?logout=1'>Logout</a></span>";
             }
           ?>
         </div>
@@ -722,13 +722,16 @@
                         <td class='text-right'>
                             <span class='small'>
                                 <a href='javascript:void(0);' onclick='javascript:hide_song(this);'>Hide</a> / 
-                                <a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}
+                                <a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}";
+
+                    if(loggedin()){
+                        echo " | {$row->plays} | {$row->erroneous} | <a href='?delete={$row->id}'>delete</a>";
+                    }
+
+                echo "
                             </span>
-                ";
-                if(loggedin()){
-                    echo " | {$row->plays} | {$row->erroneous} | <a href='?delete={$row->id}'>delete</a>";
-                }
-                echo "</span></div>";
+                        </td>
+                    </tr>";
                 $i++;
             }
         }
@@ -788,6 +791,7 @@
           ?>
         </div>
     </div>
+  </div>
 </div>
 
 
