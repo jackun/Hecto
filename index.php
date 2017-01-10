@@ -642,19 +642,19 @@
           <a class="brand" href="./">Hecto</a>
 
         <form id="jump_to_page" method="GET" class='navbar-form pull-right'>
-            <?php if(isset($_GET["bkey"])):?>
+<?php if(isset($_GET["bkey"])):?>
             <input type="hidden" name="bkey" value="<?php echo htmlentities($_GET["bkey"]);?>"/>
-            <?php endif;?>
+<?php endif;?>
             <select id="page_select" name="page">
-            <?php
-                for($id=1; $id<=$page_count; $id++)
-                {
-                    echo "<option value=\"$id\"";
-                    if(isset($_GET["page"]) && $id==$_GET["page"])
-                        echo " selected=\"selected\" ";
-                    echo ">Page $id</option>\n";
-                }
-            ?>
+<?php
+        for($id=1; $id<=$page_count; $id++)
+        {
+            echo "                <option value=\"$id\"";
+            if(isset($_GET["page"]) && $id==$_GET["page"])
+                echo " selected=\"selected\"";
+            echo ">Page $id</option>\n";
+        }
+?>
             </select>
             <input type="submit" value="Go">
         </form>
