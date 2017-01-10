@@ -1,3 +1,28 @@
+<?php session_start();
+	$logged_in_user = $_SESSION["logged_in_user"];
+	if(!$logged_in_user && isset($_POST["passwd"]))
+	{
+		$_SESSION["logged_in_user"] = hash("sha256", $_POST["passwd"]) === "f10fb0086f2fac5c4f3c5904fa22675c10d432e8b3967a06e705cf67f6969c21";
+		header("Location: ".str_replace("index.php", "", $_SERVER['PHP_SELF']));
+		die;
+	}
+?>
+<?php if(!$logged_in_user): ?>
+<!DOCTYPE html public '❄'>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="icon.ico" rel="icon" type="image/x-icon" />
+    <title>Hecto</title>
+  </head>
+  <body>
+    <form method="POST">
+    Password: <input type="password" name="passwd"/>
+    <input type="submit"/>
+    </form>
+  </body>
+</html>
+<?php die; endif;?>
 <?php
 //parse_str($_SERVER['QUERY_STRING'], $_GET);
 //error_reporting(E_ALL);
