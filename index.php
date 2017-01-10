@@ -492,6 +492,11 @@
             return false;
         }
 
+        function hide_song(node) {
+            $(node).parents().eq(2).remove();
+            return false;
+        }
+
         $(document).ready(function() {
             var l = location.hash;
             if (l.indexOf('#') === 0) {
@@ -716,6 +721,7 @@
                         <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>
                         <td class='text-right'>
                             <span class='small'>
+                                <a href='javascript:void(0);' onclick='javascript:hide_song(this);'>Hide</a> / 
                                 <a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}
                             </span>
                 ";
