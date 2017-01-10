@@ -531,28 +531,31 @@
             });
 
 <?php if(!isset($_GET["noinfi"])): ?>
-            $('#songs table tbody').infinitescroll({
-                state: { currPage: <?php echo isset($_GET["page"]) ? intval($_GET["page"]) : "1"; ?> },
-                debug: false,
-                navSelector  : "tr.pagination",
-                nextSelector : "tr.pagination a:first",
-                itemSelector : "tr.song",
-                dataType: 'html',
-                pathParse    : function() {
-                    // Whatever....
-                    var extra = [];
-                    var href = window.location.href;
-                    var m = href.match(/bkey=(.*?)(&|$)/);
-                    if(m) extra.push('bkey=' + m[1]);
-                    return ['?' + extra.join('&') + (extra.length ? '&' : '') + 'page=', ''];
-                },
-                loading : {
-                    msgText      : 'Loading MOAR...',
-                }
-            }, function (e) {
-                if (location.hash.length)
-                    set_current(location.hash.substring(1));
-            });
+            function paginate()
+            {
+                $('#songs table tbody').infinitescroll({
+                    state: { currPage: <?php echo isset($_GET["page"]) ? intval($_GET["page"]) : "1"; ?> },
+                    debug: false,
+                    navSelector  : "tr.pagination",
+                    nextSelector : "tr.pagination a:first",
+                    itemSelector : "tr",
+                    dataType: 'html',
+                    pathParse    : function() {
+                        // Whatever....wtf does this do anyway
+                        var extra = [];
+                        var m = window.location.search.match(/bkey=(.*?)(&|$)/);
+                        if(m) extra.push('bkey=' + m[1]);
+                        return ['?' + extra.join('&') + (extra.length ? '&' : '') + 'page=', ''];
+                    },
+                    loading : {
+                        msgText      : 'Loading MOAR...',
+                    }
+                }, function (e) {
+                    if (location.hash.length)
+                        set_current(location.hash.substring(1));
+                });
+            }
+            paginate();
 <?php endif; ?>
 
             $('#powersave').click(function(e) {
@@ -603,7 +606,29 @@
             switch_size_fn(switch_size);
 
             $('#page_select').change(function(e){
-                this.form.submit();
+                //this.form.submit();
+                var table = $('#songs table');
+                var q = $(this).parent().serialize();
+                table.empty();
+                table.load('?'+ q + ' #songs table tbody', paginate);
+            });
+
+            $('form#search').submit(function(e){
+                e.preventDefault();
+                var table = $('#songs table');
+                var q = $(this).serialize();
+                table.empty();
+                table.load('?'+ q + ' #songs table tbody');
+            });
+
+            $('a.brand').click(function(e){
+                e.preventDefault();
+                var table = $('#songs table');
+                table.empty();
+                var q = '?';
+                var m = window.location.search.match(/(bkey=.*?)(&|$)/);
+                if (m) q += m[1];
+                table.load(this.href + q + ' #songs table tbody', paginate);
             });
 
             $(document).bind('keypress', function(e) {
@@ -643,7 +668,7 @@
 
         <form id="jump_to_page" method="GET" class='navbar-form pull-right'>
 <?php if(isset($_GET["bkey"])):?>
-            <input type="hidden" name="bkey" value="<?php echo htmlentities($_GET["bkey"]);?>"/>
+            <input type="hidden" name="bkey" value="<?php echo htmlspecialchars($_GET["bkey"]);?>"/>
 <?php endif;?>
             <select id="page_select" name="page">
 <?php
@@ -659,7 +684,10 @@
             <input type="submit" value="Go">
         </form>
 
-          <form class='navbar-form pull-right' method='GET'>
+          <form id="search" class='navbar-form pull-right' method='GET'>
+<?php if(isset($_GET["bkey"])):?>
+            <input type="hidden" name="bkey" value="<?php echo htmlspecialchars($_GET["bkey"]);?>"/>
+<?php endif;?>
             <input class="span7" name=q size=15 placeholder=Search type=search value="<?php
                 if(isset($_GET['q'])){
                   echo htmlspecialchars($_GET['q']);
