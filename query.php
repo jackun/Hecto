@@ -11,17 +11,26 @@ $start = $page * LEHEL - LEHEL;
 function add_query_params()
 {
 	$q = "";
+	$c = "where";
 	if(isset($_GET['p'])){
 		$q.=", videos_playlist as v2 where v2.playlist = :p and v.id = v2.video_id";
-	}elseif(isset($_GET['bkey'])){
+	}
+
+	if(isset($_GET['bkey'])){
 		$q.=" where v.bkey = :bkey";
-	}elseif(isset($_GET['user'])){
-		$q.=" where v.user = :user";
-	}elseif(isset($_GET['q'])){
+		$c = "and";
+	}
+	if(isset($_GET['user'])){
+		$q.=" $c v.user = :user";
+		$c = "and";
+	}
+	if(isset($_GET['q'])){
 		$_GET['q'] = trim($_GET['q']);
-		$q.=" where MATCH(v.title) AGAINST  (:q)";
-	}elseif(isset($_GET['watch'])){
-		$q.=" where v.watch = :watch";
+		$q.=" $c MATCH(v.title) AGAINST  (:q)";
+		$c = "and";
+	}
+	if(isset($_GET['watch'])){
+		$q.=" $c v.watch = :watch";
 	}
 	return $q;
 }
@@ -30,14 +39,18 @@ function bind_query_params($sth)
 {
 	if(isset($_GET['p'])){
 		$sth->bindValue(':p', $_GET['p']);
-	}elseif(isset($_GET['bkey'])){
+	}
+	if(isset($_GET['bkey'])){
 		$sth->bindValue(':bkey', $_GET['bkey']);
-	}elseif(isset($_GET['user'])){
+	}
+	if(isset($_GET['user'])){
 		$sth->bindValue(':user', $_GET['user']);
-	}elseif(isset($_GET['q'])){
+	}
+	if(isset($_GET['q'])){
 		$_GET['q'] = trim($_GET['q']);
 		$sth->bindValue(':q', $_GET['q']);
-	}elseif(isset($_GET['watch'])){
+	}
+	if(isset($_GET['watch'])){
 		$sth->bindValue(':watch', $_GET['watch']);
 	}
 }
