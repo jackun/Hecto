@@ -31,7 +31,7 @@ open('plugin/main.js', 'w').write(
 path = os.path.dirname(__file__)
 
 result = subprocess.check_call([
-  'google-chrome',
+  'google-chrome-stable',
   '--pack-extension=%s' % os.path.join(path, 'plugin/'),
   '--pack-extension-key=%s' % os.path.join(path, 'plugin.pem')
 ])

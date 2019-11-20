@@ -1,11 +1,23 @@
-<?php session_start();
-	$logged_in_user = $_SESSION["logged_in_user"];
-	if(!$logged_in_user && isset($_POST["passwd"]))
-	{
-		$_SESSION["logged_in_user"] = hash("sha256", $_POST["passwd"]) === "f10fb0086f2fac5c4f3c5904fa22675c10d432e8b3967a06e705cf67f6969c21";
-		header("Location: ".str_replace("index.php", "", $_SERVER['PHP_SELF']));
-		die;
-	}
+<?php
+ob_start();
+session_start();
+
+error_reporting(0);
+ini_set('display_errors', 0);
+
+
+    $logged_in_user = true;
+    /*$logged_in_user = $_SESSION["logged_in_user"];
+    if(!$logged_in_user && isset($_POST["passwd"]))
+    {
+        $_SESSION["logged_in_user"] = hash("sha256", $_POST["passwd"]) === "f10fb0086f2fac5c4f3c5904fa22675c10d432e8b3967a06e705cf67f6969c21";
+        header("Location: ".str_replace("index.php", "", $_SERVER['PHP_SELF']));
+        die;
+    }*/
+
+//parse_str($_SERVER['QUERY_STRING'], $_GET);
+    include "functions.php";
+    $time_start = microtime_float();
 ?>
 <?php if(!$logged_in_user): ?>
 <!DOCTYPE html public '❄'>
@@ -23,12 +35,6 @@
   </body>
 </html>
 <?php die; endif;?>
-<?php
-//parse_str($_SERVER['QUERY_STRING'], $_GET);
-//error_reporting(E_ALL);
-    include "functions.php";
-    $time_start = microtime_float();
-?>
 <!DOCTYPE html public '❄'>
 <html>
   <head>
@@ -36,10 +42,12 @@
     <link href="icon.ico" rel="icon" type="image/x-icon" />
     <title>Hecto</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' />
+   <!-- <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' /> -->
+   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
     <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' rel="stylesheet" >
     <link href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc" rel="chrome-webstore-item" />
-    <link type="text/css" rel="stylesheet" href="style.css?201612231">
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="style.css?201904181">
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
@@ -235,13 +243,13 @@
         }
 
         function get_checked() {
-            return $('.checkbox:checked');
+            return $('#songs .cbox:checked');
         }
 
         function get_next() {
             var checked = get_checked();
             if (checked.length) {
-                var next = $('.checkbox:gt(' + idx + '):checked');
+                var next = $('#songs .cbox:gt(' + idx + '):checked');
                 if (!next.length) {
                     next = checked;
                 }
@@ -342,7 +350,7 @@
         function onYouTubeIframeAPIReady() {
             ytplayer = new YT.Player('ytapiplayer', {
                 height: '300',
-                width: '400',
+                width: '533',
                 playerVars: {
                     'controls': 1,
                     'iv_load_policy': 3, //annotations off
@@ -357,12 +365,11 @@
 
         function onPlayerStateChange(event) {
             if (!dont_force_medium && event.data == YT.PlayerState.BUFFERING) {
-                event.target.setPlaybackQuality('medium');
+                //event.target.setPlaybackQuality('medium'); // R.I.P
             }
         }
 
         function onPlayerReady(event) {
-            event.target.setPlaybackQuality('medium');
             setInterval(update_player_info, 500);
             // ytplayer.addEventListener("onStateChange", "on_player_state_change");
             ytplayer.addEventListener('onError', 'on_player_error');
@@ -443,7 +450,7 @@
        function get_prev() {
             var checked = get_checked();
             if (checked.length) {
-                var prev = $('.checkbox:lt(' + idx + '):checked');
+                var prev = $('#songs .cbox:lt(' + idx + '):checked');
                 if (!prev.length) {
                     prev = checked;
                 }
@@ -572,15 +579,15 @@
                 }
             });
 
-            $('#autoplay').checked = autoplay;
+            $('#autoplay').prop('checked', autoplay);
             $('#autoplay').click(function(e) {
                 cookie("autoplay", (autoplay = this.checked) ? 1 : 0);
             });
 
-            $('#dont-force-medium').checked = dont_force_medium;
+            /*$('#dont-force-medium').prop('checked', dont_force_medium);
             $('#dont-force-medium').click(function(e) {
                 cookie("dont-force-medium", (dont_force_medium = this.checked) ? 1 : 0);
-            });
+            });*/
 
             function switch_size_fn(checked)
             {
@@ -589,16 +596,18 @@
                     $('div#sidebar').addClass('bigplayer_sidebar');
                     $('div#songs').addClass('bigplayer_songs');
                     $('#ytapiplayer').addClass('bigplayer_yt');
+                    $('#songs table').addClass('hide-right-td');
                 }
                 else
                 {
                     $('div#sidebar').removeClass('bigplayer_sidebar');
                     $('div#songs').removeClass('bigplayer_songs');
                     $('#ytapiplayer').removeClass('bigplayer_yt');
+                    $('#songs table').removeClass('hide-right-td');
                 }
             }
 
-            $('#switch-size').checked = switch_size;
+            $('#switch-size').prop('checked', switch_size);
             $('#switch-size').click(function(e) {
                 cookie("switch-size", (switch_size = this.checked) ? 1 : 0);
                 switch_size_fn(this.checked);
@@ -648,7 +657,7 @@
                     } else if (e.which == 120 || e.which == 88) { //X
                         var current = get_current(1);
                         if (current.length) {
-                            current.children('td:first').children('.checkbox:first').prop('checked', function(e) {
+                            current.children('td:first').children('.cbox:first').prop('checked', function(e) {
                                 this.checked = !this.checked;
                             });
                         }
@@ -664,7 +673,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid topbar">
-          <a class="brand" href="./">Hecto</a>
+        	<a class="brand" href="./"><img src="images/logo.png" title="Hecto"></a>
 
         <form id="jump_to_page" method="GET" class='navbar-form pull-right'>
 <?php if(isset($_GET["bkey"])):?>
@@ -681,7 +690,7 @@
         }
 ?>
             </select>
-            <input type="submit" value="Go">
+            <input type="submit" value="Go" style="background-color: #12b04f; line-height: 25px; border-radius: 5px; font-weight: bold; color: white;">
         </form>
 
           <form id="search" class='navbar-form pull-right' method='GET'>
@@ -745,8 +754,11 @@
                 $title = htmlspecialchars($row->title);
                 echo "
                     <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch-id=\"{$row->watch}\" data-title=\"{$title}\">
-                        <td><input class=checkbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>&nbsp;&nbsp;
-                        <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a>
+                        <td style='width: 16px;'>
+				<input id='cbx-{$row->id}' class=cbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>
+				<label for='cbx-{$row->id}'></label>
+			</td>
+                        <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a></td>
                         <td class='text-right'>
                             <span class='small'>
                                 <a href='javascript:void(0);' onclick='javascript:hide_song(this);'>Hide</a> / 
@@ -778,15 +790,15 @@
         <input class="cbox" type=checkbox id=switch-size>
         <label for=switch-size>Switch size</label>
 
-        <div id="ytapiplayer"></div>
+       	<div id="ytapiplayer"></div>
         <div id='slider'></div>
 
         <div class="sideblock">
             <div id="song_descr"></div>
             <hr>
 
-            <input class="cbox" type=checkbox id=dont-force-medium>
-            <label for=dont-force-medium>Don't force medium quality</label>
+            <!--input class="cbox" type=checkbox id=dont-force-medium>
+            <label for=dont-force-medium>Don't force medium quality</label-->
 
             <input class="cbox" type=checkbox id=autoplay>
             <label for=autoplay>Autoplay</label>
@@ -805,11 +817,13 @@
 
             <br />
                 or use this <a href="javascript:plugin();">Google Chrome extension</a>
-            <hr>
+            <?php
+            /*<hr>
             git clone <a href="https://github.com/tanelpuhu/hecto">git://github.com/tanelpuhu/hecto.git</a>
             <hr>
             <!-- Slightly different interface, with online searching <a href='javascript:ytlocal();'>here</a> -->
-            <hr>
+            <hr>*/
+            ?>
           <?php
             $time_end = round(microtime_float()-$time_start, 5);
             print sprintf("
@@ -837,3 +851,4 @@
   </script-->
   </body>
 </html>
+<?php ob_end_flush();

@@ -152,7 +152,7 @@ function add($con, $video) {
         } else {
             $json = cache("https://www.googleapis.com/youtube/v3/videos?key={$YTKey}&part=snippet&id={$watch}", 120);
             $data = json_decode($json);
-            $title = $data->items[0]->snippet->title;
+            $title = substr($data->items[0]->snippet->title, 0, 64);
             $user = 'nobody';
             if($title != "") {
                 $bkey = get_bkey($con);
@@ -234,7 +234,7 @@ if(isset($_GET['delete'])) {
     if(!loggedin()) die("Not allowed!");
     $delete = (int)$_GET['delete'];
     $con->execute("delete from videos where id = ? limit 1", $delete);
-    $con->execute("delete from videos_playlist where video_id = ?", $delete);
+    //$con->execute("delete from videos_playlist where video_id = ?", $delete);
     return_to_referer();
 }
 

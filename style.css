@@ -1,29 +1,34 @@
 body {
   margin:50px auto;
-  font-family: 'Lato', serif;
+  font-family: 'Montserrat', sans-serif;
+  color: #13ba53;
+  background: #181818;
 }
 
 
 a {
-    color:#CA5300;
+    color:#fff;
+	text-transform: uppercase;
+	font-size: 12px;
 }
 
 a:hover {
-  color:#FF852E;
+  color:#03ba4f;
+  background: transparent;
 }
 
 .odd {
-  background-color: #F1F1F1;
+  background-color: #181818;
 }
 
 .even {
-  background-color: #FBFBFB;
+  background-color: #1a1a1a;
 }
 
 
 .song {
   padding:5px;
-  border-left:5px solid #FFF;
+  border-left:0;
 }
 
 .song .small{
@@ -33,7 +38,7 @@ a:hover {
 }
 
 .song .small a{
-  color:#333;
+  color:#13ba53
   text-decoration:none;
   font-size:1em;
 }
@@ -43,13 +48,26 @@ a:hover {
 }
 
 .current {
-  background-color: #DBDBDB;
-  border-left:5px solid #999 !important;
+	background: #038137;
+	background: -moz-linear-gradient(top, #038137 0%, #03ba4f 100%);
+	background: -webkit-linear-gradient(top, #038137 0%,#03ba4f 100%);
+	background: linear-gradient(to bottom, #038137 0%,#03ba4f 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#038137', endColorstr='#03ba4f',GradientType=0 );
+	border-left:0 !important;
 }
 
+.current a {
+    color:#fff;
+}
+
+.current a:hover {
+  color:#13ba53;
+}
+
+
 .current_move {
-  background-color: #EAD2CC;
-  border-left:5px solid #D45E5E !important;
+  background-color: #ac2424;
+  border-left:0 !important;
 }
 
 .pagination {
@@ -65,7 +83,7 @@ a:hover {
 .bottom-bar {
   width: 100% ;
   height:45px;
-  background-color:rgba(111, 111, 111, 0.7);
+  background-color:282828;
   position: fixed;
   bottom: 0px;
   z-index: 1000;
@@ -78,12 +96,14 @@ a:hover {
   margin-right:20px;
   text-align:right;
   float:right;
-  font-size:1.2em;
+  font-size:1.4em;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.5);
 }
 
 .sideblock {
   margin-top:20px;
   padding: 10px;
+  color: #a3a3a3;
 }
 
 
@@ -92,6 +112,9 @@ a:hover {
   width:800px;
   z-index: 1;
   position: relative;
+/*  background-color: #383838;*/
+  box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.45);
+
 }
 
 .progress-outer {
@@ -102,30 +125,23 @@ a:hover {
   position:absolute;
   z-index: 2;
   position: absolute;
-  top: 3px;
+  top: 0px;
   z-index: 2;
   text-align: right;
+  font-family: 'Droid Sans', serif;
   width: 100%;
+  color: #fff;
+  border-radius: 5px;
 }
 
 #pro-playing {
-  background-color: rgb(100, 100, 100);
-  background-image: -moz-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179));
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(100, 100, 100)), to(rgb(179, 179, 179)));
-  background-image: -webkit-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179))
-  background-image: -o-linear-gradient(top, rgb(100, 100, 100), rgb(179, 179, 179));
-  background-image: linear-gradient(to bottom, rgb(100, 100, 100), rgb(179, 179, 179));
-  background-repeat: repeat-x;
+  background-color: #13ba53;
+  /*border-right: 2px solid #191792;*/
 }
 
 #pro-loaded {
-  background-color: rgb(238, 238, 238);
-  background-image: -moz-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224));
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(238, 238, 238)), to(rgb(224, 224, 224)));
-  background-image: -webkit-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224))
-  background-image: -o-linear-gradient(top, rgb(238, 238, 238), rgb(224, 224, 224));
-  background-image: linear-gradient(to bottom, rgb(238, 238, 238), rgb(224, 224, 224));
-  background-repeat: repeat-x;
+  background-color: #13ba53;
+  box-shadow: inset 5px 0 0 rgba(0, 0, 0, 0.45),inset 0 -1px 0 rgba(0,0,0,0.15);
 }
 
 #sidebar {
@@ -149,11 +165,10 @@ a:hover {
  height:80vh;
 }
 
-label {
- background: #F1F1F1;
+.cbox + label {
  padding: 5px;
  padding-left: 24px;
- border: 1px solid #ddd;
+ border:0;
  position: relative;
 }
 
@@ -161,7 +176,7 @@ label {
  display: none;
 }
 
-label:after {
+input[type=checkbox].cbox + label:after {
  position: absolute;
  left: 2px;
  top: 6px;
@@ -170,9 +185,52 @@ label:after {
  z-index: 1;
  content: "";
  display: inline-block;
- background-image: url(images/checkbox_unchecked.png); /* Gentleface.com / http://findicons.com/icon/267703/checkbox_checked */
+ background-image: url(images/checkbox_unchecked.png);
 }
 
-input[type=checkbox]:checked + label:after {
- background-image: url(images/checkbox_checked.png); /* Gentleface.com / http://findicons.com/icon/267796/checkbox_unchecked */
+input[type=checkbox]:checked.cbox + label:after {
+ background-image: url(images/checkbox_checked.png);
+}
+
+.song .cbox + label {
+ padding: 0px;
+ padding-left: 5px;
+}
+
+.song input[type=checkbox].cbox + label:after {
+ top: 3px;
+}
+
+.navbar-inner {
+ border: 1px solid #282828 !important;
+}
+
+tr.current td {
+ color: white;
+}
+
+tr.current:hover td {
+ color: unset;
+}
+
+.hide-right-td  td.text-right {
+ display: none;
+}
+
+ /* override bootstrap */
+
+.btn:hover, .btn:focus, .btn:active {
+ background-color: unset;
+ outline: 0;
+}
+
+a:focus {
+   outline: 0;
+}
+
+
+.navbar-form input, .navbar-form select{
+	background-color: #181818;
+    border: 1px solid #2f2e2e;
+		
 }

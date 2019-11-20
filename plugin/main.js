@@ -1,4 +1,4 @@
-var default_server = 'lusikas.com',
+var default_server = 'furyy.planet.ee/hecto2017',
     version = 0,
     get_version = function () {
         return version;
