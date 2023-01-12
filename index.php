@@ -81,7 +81,7 @@ ini_set('display_errors', 0);
             switch_size = parseInt(cookie("switch-size")) === 1,
             pro_playing,
             pro_loaded,
-            api_videos = 'https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBXvgH3EooBGKkicX2724L9EoD1M6PVPqE&part=snippet';
+            on_player_error_st = null;
 
         $.fn.get_random = function() {
             var len = this.length,
@@ -330,7 +330,7 @@ ini_set('display_errors', 0);
                 setTimeout(function() {
                     add_one_play(watch);
                 }, 10000);
-                $.getJSON(api_videos + '&id=' + watch, video_info);
+                $.getJSON('videos.php?id=' + watch, video_info);
 
                 set_current(watch);
             }
@@ -338,6 +338,11 @@ ini_set('display_errors', 0);
 
         function play_track_no(watch) {
             if (watch) {
+                if (on_player_error_st) {
+                    clearTimeout(on_player_error_st);
+                    on_player_error_st = null;
+                }
+
                 load_new_video(watch);
                 update_song_title();
             }
@@ -415,7 +420,8 @@ ini_set('display_errors', 0);
                 url: "<?php echo $_SERVER['PHP_SELF'];?>",
                 data: "erroneous=" + get_current_watch()
             });
-            setTimeout(function() {
+            on_player_error_st = setTimeout(function() {
+                on_player_error_st = null;
                 play_next();
             }, 2000);
         }
