@@ -23,8 +23,10 @@ function return_to_referer() {
     if(isset($_SERVER['HTTP_REFERER'])) {
         $path = $_SERVER['HTTP_REFERER'];
     }
-    header("Location: {$path}");
-    die();
+
+    header("Location: $path", true);
+    ob_end_flush();
+    exit();
 }
 
 function login_cookies() {
