@@ -26,6 +26,11 @@ class Database{
     return $prep;
   }
 
+  public function last_id()
+  {
+    return $this->con->lastInsertId();
+  }
+
   public function prepare($sql) {
     return $this->con->prepare($sql);
   }

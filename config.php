@@ -1,4 +1,8 @@
 <?php
+//ini_set('display_errors', '1');
+//ini_set('display_startup_errors', '1');
+//error_reporting(E_ALL);
+
 define('LIVE_CONFIG', 'config_live.php');
 
 //ytplayer API
@@ -46,3 +50,17 @@ if(file_exists(LIVE_CONFIG)) {
     define('DEFAULT_FORMAT', 'default');
     define('AUTOPLAY', 'false');
 }
+
+$tnt_config = [
+    'driver'    => 'mysql',
+    'host'      => DB_SERVER,
+    'database'  => DB_NAME,
+    'username'  => DB_USERNAME,
+    'password'  => DB_PASSWORD,
+    'storage'   => __DIR__ .'/tnt/',
+    'stemmer'   => \TeamTNT\TNTSearch\Stemmer\PorterStemmer::class//optional
+];
+
+//public $fuzzy_prefix_length  = 2;
+//public $fuzzy_max_expansions = 50;
+//public $fuzzy_distance       = 2; //represents the Levenshtein distance;

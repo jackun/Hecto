@@ -7,6 +7,9 @@ include "config.php";
 include "mysql.php";
 include "func.cache.php";
 
+require __DIR__ . '/vendor/autoload.php';
+use TeamTNT\TNTSearch\TNTSearch;
+
 function microtime_float() {
    list($usec, $sec) = explode(" ", microtime());
    return ((float)$usec + (float)$sec);
@@ -130,6 +133,7 @@ END;
 
 function add($con, $video) {
     global $YTKey;
+    global $tnt_config;
     $url = parse_url($video);
     $url['host'] = ltrim($url['host'], "w.");
     if(strtolower($url['host']) != "youtube.com") {
@@ -160,6 +164,14 @@ function add($con, $video) {
                 $bkey = get_bkey($con);
                 $con->execute("INSERT INTO videos (id, title, user, watch, time, bkey) VALUES (NULL, ?, ?, ?, CURRENT_TIMESTAMP, ?)", $title, $user, $watch, $bkey);
                 yImage($watch);
+
+
+                $tnt = new TNTSearch;
+                $tnt->loadConfig($tnt_config);
+                $tnt->selectIndex("title.index");
+                $index = $tnt->getIndex();
+                $index->insert(['id' => $con->last_id(), 'title' => $data->items[0]->snippet->title]);
+
                 if(!isset($_GET['bookmark'])) {
                     header('Location: ./?response=added&watch='.$watch);
                 } else {
@@ -237,6 +249,11 @@ if(isset($_GET['delete'])) {
     $delete = (int)$_GET['delete'];
     $con->execute("delete from videos where id = ? limit 1", $delete);
     //$con->execute("delete from videos_playlist where video_id = ?", $delete);
+    $tnt = new TNTSearch;
+    $tnt->loadConfig($tnt_config);
+    $tnt->selectIndex("title.index");
+    $index = $tnt->getIndex();
+    $index->insert($delete);
     return_to_referer();
 }
 
