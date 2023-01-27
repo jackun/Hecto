@@ -56,7 +56,8 @@ function cache($url, $cache_aeg = 20, $ignore_error = 0, $cache_dir = "./cache/"
 }
 
 function cache_image($url){
-    $ext = ".".end(explode(".", $url));
+    $exp = explode(".", $url);
+    $ext = ".".end($exp);
     cache($url, 24*60*36509, 1, "./cache/", $ext);
     return md5($url).$ext;
 }
