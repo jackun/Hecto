@@ -816,10 +816,10 @@ ini_set('display_errors', 0);
             <label for=powersave>Powersave</label>
             <hr>
 
-            Drag this to your bookmark bar : <b><a href="javascript:(function(){var script = document.createElement('script');script.setAttribute('type','text/javascript'); script.setAttribute('src','http://<?php
+            Drag this to your bookmark bar : <b><a href="javascript:void(!function(){fetch('https://<?php
                 $dir = rtrim(dirname($_SERVER['PHP_SELF']), '/');
-            echo $_SERVER['HTTP_HOST'] . $dir;
-            ?>/?bookmark='+encodeURIComponent(location.href)); document.body.appendChild(script); })();" onClick="alert('Drag this to your bookmark bar ;)'); return false;">Add to Hecto</a></b>
+                echo $_SERVER['HTTP_HOST'] . $dir . "/";
+            ?>',{body:new URLSearchParams({bookmark:window.location.href,pluginkey:'<?php echo $bkey;?>',ver:2}),method:'POST'}).then((r)=>r.text().then((t)=> {var s = document.createElement('script');s.setAttribute('type','text/javascript');s.appendChild(document.createTextNode(t));document.body.appendChild(s);}))}())">Add to Hecto</a></b>
 
             <br />
                 or use this <a href="javascript:plugin();">Google Chrome extension</a>

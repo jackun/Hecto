@@ -68,8 +68,8 @@ function set_bkey($value){
 }
 
 function get_bkey($con) {
-    if(isset($_GET['pluginkey'])){
-        $bkey = $_GET['pluginkey'];
+    if(isset($_REQUEST['pluginkey'])){
+        $bkey = $_REQUEST['pluginkey'];
         if(trim($bkey) == ""){
             $bkey = get_new_uniq_row($con, 'videos', 'bkey');
         }
@@ -83,7 +83,7 @@ function get_bkey($con) {
 }
 
 function bookmark($con, $msg, $watch = '') {
-    if(isset($_GET['plugin'])){
+    if(isset($_REQUEST['plugin'])){
         $msg = str_replace(" ", "&nbsp;", $msg);
         die(json_encode(array(
             'msg' => $msg,
@@ -150,7 +150,7 @@ function add($con, $video) {
     if($watch) {
         $ret = $con->execute("SELECT 1 FROM videos WHERE watch = ?", $watch);
         if($ret->rowcount() > 0) {
-            if(!isset($_GET['bookmark'])) {
+            if(!isset($_REQUEST['bookmark'])) {
                 header("Location: ./?response=exists&watch={$watch}");
             } else {
                 bookmark($con, 'Already exists!', $watch);
@@ -172,13 +172,13 @@ function add($con, $video) {
                 $index = $tnt->getIndex();
                 $index->insert(['id' => $con->last_id(), 'title' => $data->items[0]->snippet->title]);
 
-                if(!isset($_GET['bookmark'])) {
+                if(!isset($_REQUEST['bookmark'])) {
                     header('Location: ./?response=added&watch='.$watch);
                 } else {
                     bookmark($con, 'Added!',$watch);
                 }
             } else {
-                if(!isset($_GET['bookmark'])) {
+                if(!isset($_REQUEST['bookmark'])) {
                     header('Location: ./?response=empty_title');
                 } else {
                     bookmark($con, 'No Title???');
@@ -305,11 +305,12 @@ if(isset($_GET['set_key'])) {
 
 $bkey = get_bkey($con);
 #Bookmark / Plugin
-if(isset($_GET['bookmark'])) {
-    if(isset($_GET['pluginkey'])) {
-        set_bkey($_GET['pluginkey']);
+if(isset($_REQUEST['bookmark'])) {
+    if(isset($_REQUEST['pluginkey'])) {
+        set_bkey($_REQUEST['pluginkey']);
     }
-    add($con, $_GET['bookmark']);
+    header("Access-Control-Allow-Origin: *");
+    add($con, $_REQUEST['bookmark']);
     die();
 }
 
