@@ -6,7 +6,7 @@ if(!defined('DB_SERVER')) {
 class Database{
   public function __construct($server, $name, $username, $password) {
     try {
-      $this->con = new PDO("mysql:host={$server};dbname={$name}", $username, $password);
+      $this->con = new PDO("mysql:host={$server};dbname={$name};charset=utf8mb4", $username, $password);
       $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (Exception $e) {
       die(json_encode(array('error'=>'db connect failed!')));
