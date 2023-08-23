@@ -2,3 +2,4 @@ config_live.php
 *.crx
 *.pem
 *.ini
+cache/
