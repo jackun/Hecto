@@ -761,9 +761,10 @@ ini_set('display_errors', 0);
                 echo "
                     <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch-id=\"{$row->watch}\" data-title=\"{$title}\">
                         <td style='width: 16px;'>
-				<input id='cbx-{$row->id}' class=cbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>
-				<label for='cbx-{$row->id}'></label>
-			</td>
+                            <input id='cbx-{$row->id}' class=cbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>
+                            <label for='cbx-{$row->id}'></label>
+                        </td>
+                        <td class='td-id-number'>{$row->id})</td>
                         <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a></td>
                         <td class='text-right'>
                             <span class='small'>
@@ -781,7 +782,7 @@ ini_set('display_errors', 0);
                 $i++;
             }
         }
-        print '<tr class=pagination><td colspan=3>';
+        print '<tr class=pagination><td colspan=4>';
         if($next_link){
             $_GET['page'] = $page + 1;
             echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";

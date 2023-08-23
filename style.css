@@ -278,3 +278,9 @@ a:focus {
     width: 8px;
     vertical-align: bottom;
 }
+
+/* abuse nowrap */
+.td-id-number {
+  width:0.1%;
+  white-space: nowrap;
+}
