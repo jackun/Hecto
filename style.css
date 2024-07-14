@@ -216,6 +216,10 @@ tr.current:hover td {
  color: unset;
 }
 
+.table-hover tbody tr:hover td {
+ background-color: #333;
+}
+
 .hide-right-td  td.text-right {
  display: none;
 }

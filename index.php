@@ -228,6 +228,7 @@ ini_set('display_errors', 0);
             $('.current').removeClass('current');
             $('.song#song-' + watch).addClass('current');
             idx = get_current().data('idx');
+            document.querySelector(".current").scrollIntoView({ behavior: "smooth", block: "center", })
         }
 
         function get_current_watch() {
