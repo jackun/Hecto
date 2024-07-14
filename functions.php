@@ -140,9 +140,8 @@ function add($con, $video) {
         bookmark($con, 'Wrong page, are you on youtube.');
     }
     $query = $url['query'];
-    $v = "";
-    parse_str($query);
-    $watch = $v;
+    parse_str($query, $parsed_query);
+    $watch = $parsed_query["v"];
     if(preg_match('/[^a-z0-9_-]+/i', $watch)) {
         bookmark($con, 'Illegal stuff in video id.');
     }
