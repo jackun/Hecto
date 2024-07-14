@@ -157,7 +157,7 @@ function add($con, $video) {
         } else {
             $json = cache("https://www.googleapis.com/youtube/v3/videos?key={$YTKey}&part=snippet&id={$watch}", 120);
             $data = json_decode($json);
-            $title = substr($data->items[0]->snippet->title, 0, 64);
+            $title = substr($data->items[0]->snippet->title, 0, 256);
             $user = 'nobody';
             if($title != "") {
                 $bkey = get_bkey($con);
