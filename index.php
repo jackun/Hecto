@@ -60,7 +60,7 @@ else
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
-    <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
+    <script type="text/javascript" src="js/infinite-scroll.pkgd.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
         (function() {
@@ -626,7 +626,7 @@ else
 <?php if(!isset($_GET["noinfi"])): ?>
             function paginate()
             {
-                $('#songs table tbody').infinitescroll({
+                /*$('#songs table tbody').infinitescroll({
                     state: { currPage: <?php echo isset($_GET["page"]) ? intval($_GET["page"]) : "1"; ?> },
                     debug: false,
                     navSelector  : "tr.pagination",
@@ -646,6 +646,20 @@ else
                 }, function (e) {
                     if (location.hash.length)
                         set_current(location.hash.substring(1));
+                });*/
+
+                var container = $('#songs table tbody');
+                container.infiniteScroll({
+                    path: '.pagination__next',
+                    append: false,//'.article',
+                    status: '.scroller-status',
+                    hideNav: '.pagination',
+                    //history: false,
+                });
+
+                container.on( 'load.infiniteScroll', function( event, data ) {
+                    console.log('load.infiniteScroll', data, container);
+                    container.append($(data).find("#songs table tbody").children());
                 });
             }
             paginate();
@@ -867,12 +881,21 @@ else
         print '<tr class=pagination><td colspan=4>';
         if($next_link){
             $_GET['page'] = $page + 1;
-            echo " <a href='?". http_build_query($_GET, '', '&') ."' id=next_page>MOAR >>> </a>";
+            echo " <a class=\"pagination__next\" href='?". http_build_query($_GET, '', '&') ."'>MOAR >>> </a>";
         }
         print '</td></tr>';
         ?>
         </tbody>
         </table>
+
+        <!-- status elements -->
+        <div class="scroller-status">
+        <div class="infinite-scroll-request loader-ellips">
+            ...
+        </div>
+        <p class="infinite-scroll-last">End of content</p>
+        <p class="infinite-scroll-error">No more pages to load</p>
+        </div>
     </div>
     <div class="span4" id='sidebar'>
 
