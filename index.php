@@ -60,11 +60,6 @@ ini_set('display_errors', 0);
             var s = document.createElement('script');
             var t = document.getElementsByTagName('script')[0];
 
-            s.type = 'text/javascript';
-            s.async = true;
-            s.src = '//api.flattr.com/js/0.6/load.js?mode=auto&uid=tanel&title=Hecto&description=Hecto&category=audio&button=compact';
-            t.parentNode.insertBefore(s, t);
-
             s = document.createElement('script');
             s.type = 'text/javascript';
             s.async = true;
