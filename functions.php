@@ -136,7 +136,7 @@ function add($con, $video) {
     global $tnt_config;
     $url = parse_url($video);
     $url['host'] = ltrim($url['host'], "w.");
-    if(strtolower($url['host']) != "youtube.com") {
+    if(strpos(strtolower($url['host']), "youtube.com") === false) {
         bookmark($con, 'Wrong page, are you on youtube.');
     }
     $query = $url['query'];
