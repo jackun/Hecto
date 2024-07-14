@@ -4,7 +4,11 @@ session_start();
 
 error_reporting(0);
 ini_set('display_errors', 0);
-
+/*if (!isset($_SERVER["HTTP_HOST"])) {
+  echo "parsing...";
+  parse_str($argv[1], $_REQUEST);
+  //parse_str($argv[1], $_POST);
+}*/
 
     $logged_in_user = true;
     /*$logged_in_user = $_SESSION["logged_in_user"];
