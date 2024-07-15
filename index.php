@@ -513,6 +513,83 @@ else
             return false;
         }
 
+        function delete_song(idx)
+        {
+            ConfirmDialog("Delete song?",
+            function()
+            {
+                console.log("Deleting", idx);
+                $.ajax("?delete=" + idx)
+                .done(function(){
+                    $("tr[data-idx=\"" + idx +"\"]").remove();
+                });
+            });
+        }
+
+        function edit_title(node)
+        {
+            var parent = $(node).parents().eq(2);
+            var watch = parent.data("watch-id");
+            $("#text-edit").val(parent.find("#title").text());
+            $("#text-status").text("");
+            $("#edit-popup").dialog({
+                height: 200,
+                width: 600,
+                modal: true,
+                buttons: [
+                    {
+                        text: "Save",
+                        class: "save-button",
+                        click: function () {
+                            var new_title = $("#text-edit").val();
+
+                            $.post("index.php", {"watch": watch, "new_title": new_title})
+                            .done(function() {
+                                parent.find("#title").text(new_title);
+                                $(this).dialog("close");
+                            }.bind(this))
+                            .fail(function(r){
+                                $("#text-status").text(r.status + ": " + r.responseText);
+                            });
+                        }
+                    },
+                    {
+                        text: "Cancel",
+                        class: "cancel-button",
+                        click:
+                        function(){
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+        }
+
+        function ConfirmDialog(message, callback) {
+            $('<div></div>').appendTo('body')
+            .html('<div><h6>' + message + '?</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Delete message',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function() {
+                        callback();
+                        $(this).dialog("close");
+                    },
+                    No: function() {
+                        $(this).dialog("close");
+                    }
+                },
+                close: function(event, ui) {
+                    $(this).remove();
+                }
+            });
+        };
+
         $(document).ready(function() {
             var l = location.hash;
             if (l.indexOf('#') === 0) {
@@ -762,20 +839,22 @@ else
                 $url_bkey = urlencode($row->bkey);
                 $title = htmlspecialchars($row->title);
                 echo "
-                    <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$i}\" data-watch-id=\"{$row->watch}\" data-title=\"{$title}\">
+                    <tr class='song{$class}' id='song-{$row->watch}' data-idx=\"{$row->id}\" data-watch-id=\"{$row->watch}\" data-title=\"{$title}\">
                         <td style='width: 16px;'>
                             <input id='cbx-{$row->id}' class=cbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>
                             <label for='cbx-{$row->id}'></label>
                         </td>
                         <td class='td-id-number'>{$row->id})</td>
-                        <td><a href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a></td>
+                        <td><a id='title' href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a></td>
                         <td class='text-right'>
                             <span class='small'>
                                 <a href='javascript:void(0);' onclick='javascript:hide_song(this);'>Hide</a> / 
                                 <a href='?bkey={$url_bkey}'>{$html_bkey}</a> {$row->time}";
 
                     if(loggedin()){
-                        echo " | {$row->plays} | {$row->erroneous} | <a href='?delete={$row->id}'>delete</a>";
+                        echo " | {$row->plays} | {$row->erroneous}";
+                        echo " | <a href='javascript:void(0);' onclick='javascript:delete_song({$row->id});'>delete</a>";
+                        echo " | <a href='javascript:void(0);' onclick='javascript:edit_title(this);'>edit</a>";
                     }
 
                 echo "
@@ -846,7 +925,10 @@ else
   </div>
 </div>
 
-
+<div id="edit-popup" style="display: none" title="Edit video title">
+    <input id="text-edit" maxlength="256"></input>
+    <div id="text-status"></div>
+</div>
 
   <!--script type="text/javascript">
       var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");

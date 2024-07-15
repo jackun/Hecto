@@ -288,3 +288,21 @@ a:focus {
   width:0.1%;
   white-space: nowrap;
 }
+
+#edit-popup {
+}
+#edit-popup #text-edit
+{
+  width: 400px;
+}
+#text-status
+{
+  padding: 15px;
+  color: #C00;
+  background-color: #FFF;
+}
+
+.ui-button.cancel-button {
+  background: #C00;
+  color: #FFF;
+}
