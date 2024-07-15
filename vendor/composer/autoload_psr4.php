@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'TeamTNT\\TNTSearch\\' => array($vendorDir . '/teamtnt/tntsearch/src'),
+    'Predis\\' => array($vendorDir . '/predis/predis/src'),
 );

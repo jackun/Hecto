@@ -15,12 +15,20 @@ class ComposerStaticInit0bae96ac90dadaee543cbd98bdc4a1a2
         array (
             'TeamTNT\\TNTSearch\\' => 18,
         ),
+        'P' => 
+        array (
+            'Predis\\' => 7,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'TeamTNT\\TNTSearch\\' => 
         array (
             0 => __DIR__ . '/..' . '/teamtnt/tntsearch/src',
+        ),
+        'Predis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
     );
 
