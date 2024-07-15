@@ -22,6 +22,10 @@ if(preg_match('/MSIE/i',$_SERVER['HTTP_USER_AGENT'])) {
 }
 
 function return_to_referer() {
+
+    if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        die();
+
     $path = './';
     if(isset($_SERVER['HTTP_REFERER'])) {
         $path = $_SERVER['HTTP_REFERER'];
