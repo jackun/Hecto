@@ -46,17 +46,18 @@ ini_set('display_errors', 0);
     <link href="icon.ico" rel="icon" type="image/x-icon" />
     <title>Hecto</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <!-- <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' /> -->
-   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+    <!-- <link href='http://fonts.googleapis.com/css?family=Lato' type='text/css' rel='stylesheet' /> -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     <link href='css/bootstrap.min.css' rel='stylesheet' type='text/css' rel="stylesheet" >
     <link href="https://chrome.google.com/webstore/detail/ipinhbmnlgjnjlejfkaioflaphakdcnc" rel="chrome-webstore-item" />
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="style.css?201904181">
-    <script type="text/javascript" src="js/jquery.js"></script>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/jquery.cooquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.tablednd_0_5.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="js/jquery.infinitescroll.min.js"></script>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAUFhWyG3PCr5qQ1N1-Da58BSijuhDh6bhkVNiCWkwXm1RWNn4jxTIhy9VD42I5uMUjGdZgqjFfBxulQ" type="text/javascript"></script>
     <script type="text/javascript">
