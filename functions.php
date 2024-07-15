@@ -198,6 +198,27 @@ function add($con, $video) {
     die();
 }
 
+function edit_title($con, $watch, $new_title)
+{
+    if(!loggedin()) return false;
+
+    global $tnt_config;
+    $new_title = substr($new_title, 0, 256);
+
+    // TODO Or watch or id?
+    $con->execute("UPDATE videos SET title = ? WHERE watch = ?", $new_title, $watch);
+
+    $tnt = new TNTSearch;
+    $tnt->loadConfig($tnt_config);
+    $tnt->selectIndex("title.index");
+    $index = $tnt->getIndex();
+
+    $result = $con->execute("SELECT id FROM videos WHERE watch = ?", $watch);
+    foreach($result as $r)
+        $index->update($r->id, ['id' => $r->id, 'title' => $new_title]);
+    return true;
+}
+
 function get_new_uniq_row($con, $table, $column, $min = 5, $max = 32){
     $id = md5(time().microtime().$_SERVER['HTTP_USER_AGENT']);
     while($min <= $max) {
@@ -304,6 +325,26 @@ if(isset($_POST['format'])) {
 if(isset($_GET['set_key'])) {
     set_bkey($_GET['set_key']);
     return_to_referer();
+}
+
+if(isset($_POST['new_title']) && isset($_POST['watch']))
+{
+    if (edit_title($con, $_POST['watch'], $_POST['new_title']))
+    {
+        http_response_code(200);
+        die("OK");
+/*        die(json_encode(array(
+            'result' => 'OK',
+        ));*/
+    }
+    else
+    {
+        http_response_code(401);
+        die("Unauthorized");
+/*        die(json_encode(array(
+            'result' => 'Unauthorized',
+        ));*/
+    }
 }
 
 $bkey = get_bkey($con);
