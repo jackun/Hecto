@@ -4,6 +4,8 @@ if(!defined('DB_SERVER')) {
 }
 
 class Database{
+  var $con;
+
   public function __construct($server, $name, $username, $password) {
     try {
       $this->con = new PDO("mysql:host={$server};dbname={$name};charset=utf8mb4", $username, $password);
