@@ -2,13 +2,16 @@
 ob_start();
 session_start();
 
-error_reporting(0);
-ini_set('display_errors', 0);
-/*if (!isset($_SERVER["HTTP_HOST"])) {
-  echo "parsing...";
-  parse_str($argv[1], $_REQUEST);
-  //parse_str($argv[1], $_POST);
-}*/
+if(isset($_SERVER["REMOTE_ADDR"]) && strpos($_SERVER["REMOTE_ADDR"], "192.168") === 0)
+{
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
+else
+{
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
 
     $logged_in_user = true;
     /*$logged_in_user = $_SESSION["logged_in_user"];
@@ -19,7 +22,6 @@ ini_set('display_errors', 0);
         die;
     }*/
 
-//parse_str($_SERVER['QUERY_STRING'], $_GET);
     include "functions.php";
     $time_start = microtime_float();
 ?>
