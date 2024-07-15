@@ -652,9 +652,9 @@ else
                 container.infiniteScroll({
                     path: '.pagination__next',
                     append: false,//'.article',
-                    status: '.scroller-status',
+                    status: '.page-load-status',
                     hideNav: '.pagination',
-                    //history: false,
+                    history: false,
                 });
 
                 container.on( 'load.infiniteScroll', function( event, data ) {
@@ -889,12 +889,15 @@ else
         </table>
 
         <!-- status elements -->
-        <div class="scroller-status">
-        <div class="infinite-scroll-request loader-ellips">
-            ...
-        </div>
-        <p class="infinite-scroll-last">End of content</p>
-        <p class="infinite-scroll-error">No more pages to load</p>
+        <div class="page-load-status">
+            <div class="loader-ellips infinite-scroll-request">
+                <span class="loader-ellips__dot"></span>
+                <span class="loader-ellips__dot"></span>
+                <span class="loader-ellips__dot"></span>
+                <span class="loader-ellips__dot"></span>
+            </div>
+            <p class="infinite-scroll-last">End of content</p>
+            <p class="infinite-scroll-error">No more pages to load</p>
         </div>
     </div>
     <div class="span4" id='sidebar'>
