@@ -262,46 +262,79 @@ function shuffle_assoc($array) {
     return $new;
 }
 
-if(isset($_GET['logout'])) {
+function logout()
+{
     setcookie("h2hash", 0, time()-60*60*24*31);
     setcookie("h2chec", 0, time()-60*60*24*31);
-    return_to_referer();
 }
 
-if(isset($_GET['delete'])) {
+function delete($con, int $id)
+{
+    global $tnt_config;
     if(!loggedin()) die("Not allowed!");
-    $delete = (int)$_GET['delete'];
-    $con->execute("delete from videos where id = ? limit 1", $delete);
-    //$con->execute("delete from videos_playlist where video_id = ?", $delete);
+    $con->execute("delete from videos where id = ? limit 1", $id);
+    //$con->execute("delete from videos_playlist where video_id = ?", $id);
     $tnt = new TNTSearch;
     $tnt->loadConfig($tnt_config);
     $tnt->selectIndex("title.index");
     $index = $tnt->getIndex();
-    $index->insert($delete);
-    return_to_referer();
+    $index->delete($id);
 }
 
-if(isset($_GET['delete_playlist'])) {
+function delete_playlist($con, int $id)
+{
     if(!loggedin()) die("Not allowed!");
-    $delete_playlist = (int)$_GET['delete_playlist'];
-    $con->execute("delete from videos_playlist where playlist = ?", $delete_playlist);
-    return_to_referer();
+    $con->execute("delete from videos_playlist where playlist = ?", $id);
 }
 
-if(isset($_GET['add_one_play'])) {
+function add_one_play($con)
+{
     $con->execute("update videos set plays=plays+1 where watch=? limit 1", $_GET['add_one_play']);
-    die();
 }
-if(isset($_GET['erroneous'])) {
+
+function erroneous($con)
+{
     $con->execute("update videos set erroneous=erroneous+1 where watch=? limit 1;", $_GET['erroneous']);
-    die();
 }
-if(isset($_GET['toggleLayout'])) {
+
+function toggleLayout()
+{
     if(isset($_COOKIE['layout'])){
         setcookie("layout", 0, time()-60*60*24*31);
     }else{
         setcookie("layout", 1, time()+60*60*24*31*500);
     }
+}
+
+// -- Parse $_REQUEST into functions --
+
+if(isset($_GET['logout'])) {
+    logout();
+    return_to_referer();
+}
+
+if(isset($_GET['delete'])) {
+    delete($con, (int)$_GET['delete']);
+    return_to_referer();
+}
+
+if(isset($_GET['delete_playlist'])) {
+    delete_playlist($con, (int)$_GET['delete_playlist']);
+    return_to_referer();
+}
+
+if(isset($_GET['add_one_play'])) {
+    add_one_play($con);
+    die();
+}
+
+if(isset($_GET['erroneous'])) {
+    erroneous($con);
+    die();
+}
+
+if(isset($_GET['toggleLayout'])) {
+    toggleLayout();
     return_to_referer();
 }
 
