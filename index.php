@@ -659,6 +659,7 @@ else
 
                 container.on( 'load.infiniteScroll', function( event, data ) {
                     console.log('load.infiniteScroll', data, container);
+                    container.find("tr.pagination").remove();
                     container.append($(data).find("#songs table tbody").children());
                 });
             }
