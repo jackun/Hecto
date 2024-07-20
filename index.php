@@ -235,7 +235,27 @@ else
             $('.current').removeClass('current');
             $('.song#song-' + watch).addClass('current');
             idx = get_current().data('idx');
-            document.querySelector(".current").scrollIntoView({ behavior: "smooth", block: "center", })
+            var current = document.querySelector(".current");
+            if (!isElementInViewport(current))
+                current.scrollIntoView({ behavior: "smooth", block: "center", })
+        }
+
+        function isElementInViewport (el) {
+
+            // Special bonus for those using jQuery
+            if (typeof jQuery === "function" && el instanceof jQuery) {
+                el = el[0];
+            }
+
+            var rect = el.getBoundingClientRect();
+            var padding = 30;
+
+            return (
+                rect.top >= padding &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) - padding && /* or $(window).height() */
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+            );
         }
 
         function get_current_watch() {
