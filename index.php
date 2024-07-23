@@ -278,7 +278,12 @@ else
                 }
                 return next.first();
             }
-            return get_current().nextAll('.song:first');
+
+            var current = $('.current');
+            if (!current.length)
+                return $('.song:first');
+
+            return current.nextAll('.song:first');
         }
 
         function get_shuffle() {
@@ -420,8 +425,9 @@ else
             }
 
             if (next.length) {
+                var data = ytplayer.getVideoData();
                 var watch = next.data('watch-id');
-                if (watch === current) {
+                if (data && watch === data.video_id) {
                     seek_to(0);
                 } else {
                     play_track_no(watch);
