@@ -364,6 +364,16 @@ else
             }
         }
 
+        function cue_track_no(watch)
+        {
+            if (watch)
+            {
+                ytplayer.cueVideoById(watch);
+                if (!$('.current').length)
+                    set_current(watch);
+            }
+        }
+
         function play_track_no(watch) {
             if (watch) {
                 if (on_player_error_st) {
@@ -410,8 +420,12 @@ else
             if (volume) {
                 ytplayer.setVolume(volume);
             }
+
+            var watch = get_current_watch();
             if (autoplay) {
-                play_track_no(get_current_watch());
+                play_track_no(watch);
+            } else {
+                cue_track_no(watch);
             }
         }
 
@@ -619,11 +633,9 @@ else
         $(document).ready(function() {
             var l = location.hash;
             if (l.indexOf('#') === 0) {
-                $('.song').each(function(i, e) {
-                    if ($(e).data('watch-id') === l.substring(1)) {
-                        set_current(l.substring(1));
-                    }
-                });
+                var video_id = l.substring(1);
+                if ($('.song#song-' + video_id).length)
+                    set_current(video_id);
             }
 
             pro_playing = $('#pro-playing');
