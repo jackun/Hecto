@@ -636,6 +636,21 @@ else
                 var video_id = l.substring(1);
                 if ($('.song#song-' + video_id).length)
                     set_current(video_id);
+                else
+                {
+                    // TODO How to autoload to correct video? Just prepending the track that's not in the first "page" to the list for now.
+                    $.ajax("<?php echo $_SERVER['PHP_SELF']; ?>?watch=" + video_id).then(function(html){
+                        var node = $(html).find("tr:first");
+                        $("#songs table tbody").prepend(node);
+                        set_current(video_id);
+                        if (autoplay) {
+                            play_track_no(video_id);
+                        } else {
+                            cue_track_no(video_id);
+                        }
+                    });
+
+                }
             }
 
             pro_playing = $('#pro-playing');
