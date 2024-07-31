@@ -783,7 +783,10 @@ else
                 var table = $('#songs table');
                 var q = $(this).parent().serialize();
                 table.empty();
-                table.load('?'+ q + ' #songs table tbody', paginate);
+                table.load('?'+ q + ' #songs table tbody', function(){
+                    paginate();
+                    set_current_from_ytplayer();
+                });
             });
 
             $('form#search').submit(function(e){
@@ -791,7 +794,7 @@ else
                 var table = $('#songs table');
                 var q = $(this).serialize();
                 table.empty();
-                table.load('?'+ q + ' #songs table tbody');
+                table.load('?'+ q + ' #songs table tbody', set_current_from_ytplayer);
             });
 
             $('a.brand').click(function(e){
