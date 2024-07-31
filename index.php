@@ -242,6 +242,14 @@ else
             }
         }
 
+        function set_current_from_ytplayer(focus = true)
+        {
+            if (ytplayer && !$('.current').length)
+            {
+                set_current(ytplayer.getVideoData().video_id, focus);
+            }
+        }
+
         function isElementInViewport (el) {
 
             // Special bonus for those using jQuery
@@ -715,10 +723,7 @@ else
                 container.on( 'load.infiniteScroll', function( event, data ) {
                     container.find("tr.pagination").remove();
                     container.append($(data).find("#songs table tbody").children());
-                    if (ytplayer && !$('.current').length)
-                    {
-                        set_current(ytplayer.getVideoData().video_id, false);
-                    }
+                    set_current_from_ytplayer(false);
                 });
             }
             paginate();
@@ -796,7 +801,10 @@ else
                 var q = '?';
                 var m = window.location.search.match(/(bkey=.*?)(&|$)/);
                 if (m) q += m[1];
-                table.load(this.href + q + ' #songs table tbody', paginate);
+                table.load(this.href + q + ' #songs table tbody', function(){
+                    paginate();
+                    set_current_from_ytplayer();
+                });
             });
 
             $(document).bind('keypress', function(e) {
