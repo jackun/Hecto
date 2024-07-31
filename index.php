@@ -231,13 +231,15 @@ else
             return current;
         }
 
-        function set_current(watch) {
-            $('.current').removeClass('current');
-            $('.song#song-' + watch).addClass('current');
-            idx = get_current().data('idx');
-            var current = document.querySelector(".current");
-            if (!isElementInViewport(current))
-                current.scrollIntoView({ behavior: "smooth", block: "center", })
+        function set_current(watch, focus = true) {
+            var el = $('.song#song-' + watch);
+            if (el.length) {
+                $('.current').removeClass('current');
+                el.addClass('current');
+                idx = el.data('idx');
+                if (!isElementInViewport(el) && focus)
+                    el[0].scrollIntoView({ behavior: "smooth", block: "center", })
+            }
         }
 
         function isElementInViewport (el) {
@@ -713,6 +715,10 @@ else
                 container.on( 'load.infiniteScroll', function( event, data ) {
                     container.find("tr.pagination").remove();
                     container.append($(data).find("#songs table tbody").children());
+                    if (ytplayer && !$('.current').length)
+                    {
+                        set_current(ytplayer.getVideoData().video_id, false);
+                    }
                 });
             }
             paginate();
