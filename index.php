@@ -202,7 +202,11 @@ else
                             <input id='cbx-{$row->id}' class=cbox name='playlist' value='{$row->id}' data-watch-id=\"{$row->watch}\" type=checkbox>
                             <label for='cbx-{$row->id}'></label>
                         </td>
-                        <td class='td-id-number'>{$row->id})</td>
+                        <td class='td-id-number'>
+                            <a href='javascript:void(0);' onclick='javascript:add_to_queue(this);'>
+                                <i title=\"Add to queue\" class=\"icon-white icon-list\"></i>
+                            </a>
+                        {$row->id})</td>
                         <td><a id='title' href='#{$row->watch}' onclick='play_track_no(\"{$row->watch}\")'>{$title}</a></td>
                         <td class='text-right'>
                             <span class='small'>
@@ -299,6 +303,16 @@ else
     <input id="text-edit" maxlength="256"></input>
     <div id="text-status"></div>
 </div>
+
+<div id="queue-popup" style="display: none" title="Video queue">
+    <div id="queue-buttons">
+        <button id="queue-clear" onclick="javascript:clear_queue();">Clear</button>
+        <button id="queue-toggle" onclick="javascript:toggle_queue();">Toggle</button>
+    </div>
+    <div id="queue-status">
+    </div>
+</div>
+
 
   <!--script type="text/javascript">
       var gaJsHost = (("https:" == document.location.protocol) ? "ssl" : "www");

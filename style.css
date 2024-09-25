@@ -302,6 +302,25 @@ a:focus {
   background-color: #FFF;
 }
 
+#queue-popup {
+  position: fixed;
+  bottom: 50px;
+  right: 20px;
+  background-color: #222;
+  border-radius: 5px 5px;
+}
+
+#queue-status, #queue-buttons {
+  padding: 5px 15px;
+}
+
+#queue-status {
+  width: 500px;
+  height: 240px;
+  overflow: auto;
+  text-wrap: nowrap;
+}
+
 .ui-button.cancel-button {
   background: #C00;
   color: #FFF;

@@ -185,6 +185,14 @@ function get_checked() {
 }
 
 function get_next() {
+
+    if (watch_queue.length) {
+        var song = watch_queue.shift();
+        set_current(song.watch_id);
+        refresh_queue_list();
+        return get_current();
+    }
+
     var checked = get_checked();
     if (checked.length) {
         var next = $('#songs .cbox:gt(' + idx + '):checked');
@@ -347,7 +355,7 @@ function onPlayerReady(event) {
 function play_next() {
     var current = get_current_watch(),
         next;
-    if ($('#shuffle').prop('checked')) {
+    if ($('#shuffle').prop('checked') && !watch_queue.length) {
         next = get_shuffle();
     } else {
         next = get_next();
@@ -574,6 +582,55 @@ function paginate()
         container.append($(data).find("#songs table tbody").children());
         set_current_from_ytplayer(false);
     });
+}
+
+
+var watch_queue = [];
+function add_to_queue(node)
+{
+    var parent = $(node).parents().eq(1);
+    var song = {
+        id: watch_queue.length ? watch_queue[watch_queue.length - 1].id + 1 : 0,
+        watch_id: parent.data('watch-id'),
+        title: parent.data('title'),
+    }
+    watch_queue.push(song);
+    refresh_queue_list();
+    $('#queue-popup').show();
+}
+
+function remove_queued(id)
+{
+    watch_queue = watch_queue.filter(function( obj ) {
+        return obj.id !== id;
+    });
+    refresh_queue_list();
+}
+
+function clear_queue()
+{
+    watch_queue = [];
+    $('#queue-status').empty();
+    $('#queue-popup').hide();
+}
+
+function refresh_queue_list()
+{
+    if (!watch_queue.length)
+        $('#queue-popup').hide();
+    var list = $('#queue-status');
+    list.empty();
+    watch_queue.forEach(function(n){
+        list.append(`<div>
+        <a title="Remove from queue" href='javascript:void(0);' onclick='javascript:remove_queued(${n.id});'>
+        <i class="icon-white icon-remove-sign"></i></a>
+        ${n.title}</div>`);
+    });
+}
+
+function toggle_queue()
+{
+    $('#queue-status').toggle();
 }
 
 $(document).ready(function() {
