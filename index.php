@@ -84,7 +84,6 @@ else
         })();
 
         var ytplayer = null,
-            idx = 0,
             format = '<?php echo getformat();?>',
             current_check = '',
             autoplay = parseInt(cookie("autoplay")) === 1,

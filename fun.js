@@ -1,3 +1,5 @@
+var idx = 0;
+
 function cookie(name, value) {
     if (name && value !== undefined) {
         $.setCookie(name, value, {
@@ -195,11 +197,21 @@ function get_next() {
 
     var checked = get_checked();
     if (checked.length) {
-        var next = $('#songs .cbox:gt(' + idx + '):checked');
-        if (!next.length) {
-            next = checked;
-        }
-        return next.first();
+        //var next = $('#songs .cbox:gt(' + idx + '):checked');
+        //if (!next.length) {
+        //    next = checked;
+        //}
+        //return next.first();
+        var curr = false, next = null;
+        var checked = $('#songs .cbox:checked');
+        checked.each(function(i,v) {
+            if (curr && !next)
+                next = v;
+
+            if (!curr && v.value == idx)
+                curr = true;
+        });
+        return $(next || checked).first();
     }
 
     var current = $('.current');
@@ -207,6 +219,28 @@ function get_next() {
         return $('.song:first');
 
     return current.nextAll('.song:first');
+}
+
+function get_prev() {
+    var checked = get_checked();
+    if (checked.length) {
+        //var prev = $('#songs .cbox:lt(' + idx + '):checked');
+        //if (!prev.length) {
+        //    prev = checked;
+        //}
+        //return prev.last();
+        var curr = false, prev = null;
+        var checked = $('#songs .cbox:checked');
+        checked.each(function(i,v) {
+            if (!curr && v.value == idx)
+                curr = true;
+            if (!curr)
+                prev = v;
+        });
+
+        return $(prev || checked).last();
+    }
+    return get_current().prevAll('.song:first');
 }
 
 function get_shuffle() {
@@ -399,7 +433,6 @@ function play_keyboard_track() {
     }
 }
 
-
 function keyboard_move(down) {
     var current = get_current(1),
         next;
@@ -417,18 +450,6 @@ function keyboard_move(down) {
         });
     }
     return next;
-}
-
-function get_prev() {
-    var checked = get_checked();
-    if (checked.length) {
-        var prev = $('#songs .cbox:lt(' + idx + '):checked');
-        if (!prev.length) {
-            prev = checked;
-        }
-        return prev.last();
-    }
-    return get_current().prevAll('.song:first');
 }
 
 function toggle_shuffle() {
