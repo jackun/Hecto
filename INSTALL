@@ -1,0 +1,4 @@
+Requirements
+* php-sqlite3 for TNT
+
+Copy config.php to config_live.php and modify, run `php tnt.php` to create/update search database.
