@@ -794,7 +794,7 @@ $(document).ready(function() {
                 keyboard_move(1);
             } else if (e.which == 107 || e.which == 75) { //K
                 keyboard_move();
-            } else if (e.which == 115 || e.which == 83) { //K
+            } else if (e.which == 115 || e.which == 83) { //S
                 toggle_shuffle();
             } else if (e.which == 120 || e.which == 88) { //X
                 var current = get_current(1);
